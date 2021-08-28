@@ -1,0 +1,35 @@
+name: iDifficulty
+version: ${project.version}
+main: me.kirkfox.idifficulty.IDifficulty
+api-version: 1.13
+author: Kirk Fox
+description: iDifficulty is a plugin used to set difficulty settings for each individual player separately including keepInventory and damage from mobs. The plugin rewards players on a higher difficulty with extra experience, mob loot, and ore drops.
+commands:
+  idifficulty:
+    description: Allows a player to set their difficulty or view their current difficulty.
+    usage: /idiff <set|list|info|view>
+    aliases: idiff
+permissions:
+  idifficulty.*:
+    default: false
+    children:
+      idifficulty.view: true
+      idifficulty.view.others: true
+      idifficulty.set: true
+      idifficulty.set.others: true
+      idifficulty.list: true
+      idifficulty.info: true
+  idifficulty.view:
+    default: true
+  idifficulty.view.others:
+    default: false
+  idifficulty.set:
+    default: true
+  idifficulty.set.others:
+    default: false
+  idifficulty.list:
+    default: true
+  idifficulty.info:
+    default: true
+  idifficulty.ignoredelay:
+    default: false

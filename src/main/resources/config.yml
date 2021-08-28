@@ -1,0 +1,57 @@
+# The default difficulty setting
+default: normal
+
+# The amount of time, in minutes, that must pass until one's difficulty can be changed
+# Setting this value to -1 will make it so that difficulty may only be selected once
+time-delay: 120
+
+# Toggles various attributes of the plugin
+toggle:
+  # If "true" difficulties will affect whether players drop items on death
+  keep-inventory: true
+  # If "true" difficulties will affect whether players drop experience on death
+  keep-xp: true
+  # If "true" difficulties will affect how much experience mobs and ores drop
+  xp-multiplier: true
+  # If "true" difficulties will affect how much damage is done by mobs
+  damage-multiplier: true
+  # If "true" difficulties will have a chance to double item drops from mobs and ores
+  doubled-loot-chance: true
+  # If "true" difficulties will affect the venom of cave spiders and bees
+  venom-time: true
+
+# A list of difficulties and their properties.
+# You may add or remove difficulties as long as you include values for all difficulty properties (keep-inventory, keep-xp, etc.)
+difficulties:
+
+  easy:
+    # Sets whether a player keeps their inventory after death
+    keep-inventory: true
+    # Sets whether a player keeps their experience points after death
+    keep-xp: true
+    # Sets the multiplier of experience gained from killing mobs, mining blocks, and using furnaces
+    xp-multiplier: 0.75
+    # Sets the multiplier of damage caused by non-player entities
+    damage-multiplier: 0.75
+    # Sets the chance (where 0.0 is 0% and 1.0 is 100%) that ores broken and mobs killed by a player will drop double items
+    doubled-loot-chance: 0.0
+    # Sets the time, in seconds, that a cave spider's venom will affect the player
+    # Venom from bees will last 3 seconds longer than the time stated below
+    # Set to 0 for no poison effect
+    venom-time: 0
+
+  normal:
+    keep-inventory: true
+    keep-xp: false
+    xp-multiplier: 1.0
+    damage-multiplier: 1.0
+    doubled-loot-chance: 0.05
+    venom-time: 7
+
+  hard:
+    keep-inventory: false
+    keep-xp: false
+    xp-multiplier: 1.5
+    damage-multiplier: 1.5
+    doubled-loot-chance: 0.2
+    venom-time: 15
