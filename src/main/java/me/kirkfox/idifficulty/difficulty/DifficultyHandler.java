@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class DifficultyHandler {
 
@@ -42,6 +43,18 @@ public class DifficultyHandler {
     public static PlayerDifficulty setPlayerDifficulty(Player player, Difficulty d) {
         PlayerDifficulty pd = DifficultyStorage.updateDifficulty(player.getUniqueId(), d);
         return (pd != null) ? pd : DifficultyStorage.createDifficulty(player.getUniqueId(), d);
+    }
+
+    public static void updatePlayerDifficulty(Player player) {
+        UUID uuid = player.getUniqueId();
+        PlayerDifficulty pd = DifficultyStorage.readDifficulty(uuid);
+        if(pd == null) {
+            DifficultyStorage.createDifficulty(uuid, defaultDifficulty);
+        } else {
+            Difficulty d = getDifficulty(pd.getName());
+            DifficultyStorage.updateDifficulty(uuid, d != null ? d : defaultDifficulty);
+        }
+
     }
 
     public static Difficulty getDefaultDifficulty() {
