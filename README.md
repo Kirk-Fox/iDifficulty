@@ -14,7 +14,7 @@ Currently, difficulty settings affect whether players keep their inventory and/o
 - __/idiff view__ [\<player\>] - Gives your own difficulty or the difficulty of the player specified. By default, only operators can view other players' difficulties
 
 ## Permissions
-This plugins permission nodes are
+This plugin's permission nodes are
 - __idifficulty.*__ - Gives all permissions.
 - __idifficulty.set__ - Allows players to use __/idiff set__ on themselves. Players have this permission by default.
 - __idifficulty.set.others__ - Allows players to use __/idiff set__ on other players.
@@ -39,7 +39,9 @@ The following are a few features that I am considering working on in the future
 
 - Hunger effects based on difficulty
 - An optional peaceful difficulty that will cause mobs to do no damage but also drop no loot or experience
-- The option to require a permission for certain difficulty settings
+- ~~The option to require a permission for certain difficulty settings~~ (to be implemented in v0.2.0)
+- Dividing the chance for double items from mobs and ores into two separate settings (one for mobs and one for ores)
+- Dividing the experience bonus from mobs and ores into two separate settings (one for mobs and one for ores)
 - Vault interaction involving losing an amount of money on death depending on difficulty (far future)
 - Plugin integration that will revoke or give permissions to players depending on their difficulty (far future)
 - Further backwards compatibility (if possible)
