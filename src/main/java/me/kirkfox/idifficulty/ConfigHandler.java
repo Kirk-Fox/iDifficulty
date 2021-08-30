@@ -54,7 +54,7 @@ public class ConfigHandler {
     public static List<Difficulty> getDifficulties() {
         List<Difficulty> dList = new ArrayList<>();
 
-        for (String key : diffKeys.toArray(new String[0])) {
+        for (String key : diffKeys) {
             dList.add(new Difficulty(Objects.requireNonNull(diffConfig.getConfigurationSection(key))));
         }
         return dList;
