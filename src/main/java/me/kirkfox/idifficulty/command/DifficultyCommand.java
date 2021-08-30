@@ -174,10 +174,13 @@ public class DifficultyCommand implements CommandExecutor {
         if(dateChanged == null || (date.after(new Date(dateChanged.getTime() + timeDelay * 60000)) && timeDelay > -1) ||
                 player.hasPermission(PERMISSION + "ignoredelay") || isOp || skipPerm) {
             if(isOp || player.hasPermission(PERMISSION + "set") || skipPerm) {
-                pd.setDateChanged(date);
-                String dName = DifficultyHandler.setPlayerDifficulty(player, d).getNameFormatted();
-                player.sendMessage(COLOR_MAIN + "Your difficulty has been changed to " + dName);
-                return dName;
+                if(!d.getNeedsPermission() || isOp || player.hasPermission(PERMISSION + "diff." + d.getName()) || skipPerm) {
+                    pd.setDateChanged(date);
+                    String dName = DifficultyHandler.setPlayerDifficulty(player, d).getNameFormatted();
+                    player.sendMessage(COLOR_MAIN + "Your difficulty has been changed to " + dName);
+                    return dName;
+                }
+                player.sendMessage(COLOR_ERROR + "You don't have permission to use " + d.getNameFormatted() + " difficulty!");
             }
             player.sendMessage(COLOR_ERROR + "You don't have permission to change your current difficulty!");
         } else if (timeDelay < 0) {
@@ -196,8 +199,10 @@ public class DifficultyCommand implements CommandExecutor {
             setDifficulty(p, d, false);
         } else if(isOp || sender.hasPermission(PERMISSION + "set.others")) {
             if(p != null) {
-                String dName = setDifficulty(p, d, true);
-                sender.sendMessage(COLOR_MAIN + p.getName() + "'s difficulty has been changed to " + dName);
+                if(!d.getNeedsPermission() || isOp || sender.hasPermission(PERMISSION + "diff." + d.getName())){
+                    String dName = setDifficulty(p, d, true);
+                    sender.sendMessage(COLOR_MAIN + p.getName() + "'s difficulty has been changed to " + dName);
+                }
             } else {
                 sender.sendMessage(COLOR_ERROR + "The player '" + pName + "' was not found!");
             }
