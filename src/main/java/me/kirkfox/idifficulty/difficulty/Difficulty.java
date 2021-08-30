@@ -11,6 +11,7 @@ public class Difficulty {
     private Double damageMod;
     private Double lootChance;
     private Integer venomTime;
+    private boolean needsPermission;
 
     public Difficulty(ConfigurationSection d) {
         this.name = d.getName();
@@ -20,6 +21,7 @@ public class Difficulty {
         this.damageMod = d.getDouble("damage-multiplier");
         this.lootChance = d.getDouble("doubled-loot-chance");
         this.venomTime = d.getInt("venom-time");
+        this.needsPermission = d.getBoolean("requires-permission");
     }
 
     public Difficulty(Difficulty d) {
@@ -34,6 +36,7 @@ public class Difficulty {
         damageMod = d.getDamageMod();
         lootChance = d.getLootChance();
         venomTime = d.getVenomTime();
+        needsPermission = d.getNeedsPermission();
     }
 
     private void resetDifficulty() {
@@ -80,6 +83,10 @@ public class Difficulty {
     public int getVenomTime() {
         notNull(venomTime);
         return venomTime;
+    }
+
+    public boolean getNeedsPermission() {
+        return needsPermission;
     }
 
     private void notNull(Object o) {

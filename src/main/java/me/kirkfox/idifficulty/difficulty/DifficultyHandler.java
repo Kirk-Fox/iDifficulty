@@ -1,35 +1,30 @@
 package me.kirkfox.idifficulty.difficulty;
 
-import org.bukkit.configuration.ConfigurationSection;
+import me.kirkfox.idifficulty.ConfigHandler;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.List;
 
 public class DifficultyHandler {
 
-    private static final ArrayList<Difficulty> DIFFICULTY_LIST = new ArrayList<>();
+    private static List<Difficulty> difficultyList = new ArrayList<>();
     private static Difficulty defaultDifficulty;
 
-    public static void registerDifficulties(ConfigurationSection config) {
-        ConfigurationSection d = Objects.requireNonNull(config.getConfigurationSection("difficulties"));
-        String[] keys = d.getKeys(false).toArray(new String[0]);
-
-        for (String key : keys) {
-            DIFFICULTY_LIST.add(new Difficulty(Objects.requireNonNull(d.getConfigurationSection(key))));
-        }
-        defaultDifficulty = getDifficulty(config.getString("default"));
+    public static void registerDifficulties() {
+        difficultyList = ConfigHandler.getDifficulties();
+        defaultDifficulty = getDifficulty(ConfigHandler.getDefaultDifficultyName());
     }
 
-    public static ArrayList<Difficulty> getDifficultyList() {
-        return DIFFICULTY_LIST;
+    public static List<Difficulty> getDifficultyList() {
+        return difficultyList;
     }
 
     @Nullable
     public static Difficulty getDifficulty(String name) {
-        for(Difficulty d : DIFFICULTY_LIST) {
+        for(Difficulty d : difficultyList) {
             if(d.getName().equalsIgnoreCase(name)) {
                 return d;
             }

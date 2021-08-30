@@ -1,3 +1,6 @@
+# DO NOT CHANGE UNDER ANY CIRCUMSTANCES
+config-version: 1
+
 # The default difficulty setting
 default: normal
 
@@ -39,6 +42,9 @@ difficulties:
     # Venom from bees will last 3 seconds longer than the time stated below
     # Set to 0 for no poison effect
     venom-time: 0
+    # Sets whether this difficulty requires players that use it to have the "idifficulty.diff.[difficulty_name]" permission
+    # For example, if set to true for this difficulty, players would need the permission node "idifficulty.diff.easy" to use it
+    requires-permission: false
 
   normal:
     keep-inventory: true
@@ -47,6 +53,7 @@ difficulties:
     damage-multiplier: 1.0
     doubled-loot-chance: 0.05
     venom-time: 7
+    requires-permission: false
 
   hard:
     keep-inventory: false
@@ -55,3 +62,4 @@ difficulties:
     damage-multiplier: 1.5
     doubled-loot-chance: 0.2
     venom-time: 15
+    requires-permission: false

@@ -13,8 +13,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class DifficultyCommand implements CommandExecutor {
 
@@ -208,7 +208,7 @@ public class DifficultyCommand implements CommandExecutor {
 
     private void sendDifficultyList(CommandSender sender) {
         if(isOp || sender.hasPermission(PERMISSION + "list")) {
-            ArrayList<Difficulty> dList = DifficultyHandler.getDifficultyList();
+            List<Difficulty> dList = DifficultyHandler.getDifficultyList();
             StringBuilder dString = new StringBuilder();
             int s = dList.size();
             for (int i = 0; i < s; i++) {

@@ -2,6 +2,7 @@ package me.kirkfox.idifficulty;
 
 import me.kirkfox.idifficulty.command.DifficultyCommand;
 import me.kirkfox.idifficulty.command.DifficultyTabCompleter;
+import me.kirkfox.idifficulty.difficulty.DifficultyHandler;
 import me.kirkfox.idifficulty.difficulty.DifficultyStorage;
 import me.kirkfox.idifficulty.listener.*;
 import org.bukkit.Bukkit;
@@ -31,6 +32,7 @@ public final class IDifficulty extends JavaPlugin {
         rand = new Random();
 
         ConfigHandler.registerConfig(this);
+        DifficultyHandler.registerDifficulties();
 
         registerCommand();
         registerListeners();
