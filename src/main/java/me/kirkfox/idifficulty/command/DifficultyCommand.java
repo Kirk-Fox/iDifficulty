@@ -181,6 +181,7 @@ public class DifficultyCommand implements CommandExecutor {
                     return dName;
                 }
                 player.sendMessage(COLOR_ERROR + "You don't have permission to use " + d.getNameFormatted() + " difficulty!");
+                return null;
             }
             player.sendMessage(COLOR_ERROR + "You don't have permission to change your current difficulty!");
         } else if (timeDelay < 0) {
