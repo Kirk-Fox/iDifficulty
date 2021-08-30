@@ -24,14 +24,16 @@ public class MetricsHandler extends Metrics {
             addCustomChart(new SimplePie(key + "Toggle", () -> String.valueOf(ConfigHandler.getToggle(key))));
         }
 
-        addCustomChart(new AdvancedPie("playerDifficultyCount", this::getPlayerDifficultyCount));
+        addCustomChart(new AdvancedPie("playerDifficultyCount", () -> getPlayerDifficultyCount(true)));
+        addCustomChart(new AdvancedPie("playerNonDefaultDifficultyCount", () -> getPlayerDifficultyCount(false)));
     }
 
-    private Map<String, Integer> getPlayerDifficultyCount() {
+    private Map<String, Integer> getPlayerDifficultyCount(boolean includeDefault) {
         Map<String, Integer> dMap = new HashMap<>();
         for (Difficulty d : DifficultyStorage.getPlayerDifficulties()) {
             String name = d.getName();
-            dMap.put(name, dMap.getOrDefault(name, 0) + 1);
+            if(includeDefault || !name.equalsIgnoreCase(DifficultyHandler.getDefaultDifficulty().getName()))
+                dMap.put(name, dMap.getOrDefault(name, 0) + 1);
         }
         return dMap;
     }
