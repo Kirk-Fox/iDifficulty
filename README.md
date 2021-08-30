@@ -39,7 +39,7 @@ The following are a few features that I am considering working on in the future
 
 - Hunger effects based on difficulty
 - An optional peaceful difficulty that will cause mobs to do no damage but also drop no loot or experience
-- The option to require a permission for certain difficulty settings
+- ~~The option to require a permission for certain difficulty settings~~ (to be implemented in v0.2.0)
 - Vault interaction involving losing an amount of money on death depending on difficulty (far future)
 - Plugin integration that will revoke or give permissions to players depending on their difficulty (far future)
 - Further backwards compatibility (if possible)
