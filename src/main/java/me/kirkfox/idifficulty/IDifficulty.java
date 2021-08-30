@@ -23,6 +23,8 @@ public final class IDifficulty extends JavaPlugin {
     private static IDifficulty plugin;
     private static Random rand;
 
+    private String updateString = null;
+
     private static final int RESOURCE_ID = 95730;
 
     @Override
@@ -67,7 +69,7 @@ public final class IDifficulty extends JavaPlugin {
 
     private void registerListeners() {
         Listener[] listeners = {new BlockBreakListener(), new EntityDamageByEntityListener(), new EntityDeathListener(),
-                new FurnaceExtractListener(), new PlayerDeathListener(), new PlayerJoinListener()};
+                new FurnaceExtractListener(), new PlayerDeathListener(), new PlayerJoinListener(updateString)};
         for(Listener l : listeners) {
             getServer().getPluginManager().registerEvents(l, this);
         }
@@ -80,8 +82,9 @@ public final class IDifficulty extends JavaPlugin {
                 if(scanner.hasNext()) {
                     String version = scanner.next();
                     if (!this.getDescription().getVersion().equalsIgnoreCase(version)) {
-                        outputLog("A new version of iDifficulty is available. " +
-                                "Go to https://www.spigotmc.org/resources/idifficulty.95730/ for iDifficulty v" + version);
+                        updateString = "A new version of iDifficulty is available. " +
+                                "Go to https://www.spigotmc.org/resources/idifficulty.95730/ for iDifficulty v" + version;
+                        outputLog(updateString);
                     }
                 }
             } catch (IOException e) {
