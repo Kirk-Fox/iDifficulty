@@ -1,6 +1,3 @@
-# DO NOT CHANGE UNDER ANY CIRCUMSTANCES
-config-version: 1
-
 # The default difficulty setting
 default: normal
 
@@ -63,3 +60,6 @@ difficulties:
     doubled-loot-chance: 0.2
     venom-time: 15
     requires-permission: false
+
+# DO NOT CHANGE UNDER ANY CIRCUMSTANCES
+config-version: 1
