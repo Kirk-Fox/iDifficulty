@@ -31,7 +31,7 @@ public class EntityDamageByEntityListener implements Listener {
                 isBee = false;
             }
             if(ConfigHandler.getToggle("venomTime") && (isCaveSpider || isBee)) {
-                p.damage(damage);
+                p.damage(damage, d);
                 int venomTime = pd.getVenomTime();
                 if(venomTime > 0) {
                     p.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 20*(pd.getVenomTime() + (isBee ? 3 : 0)), 0));
