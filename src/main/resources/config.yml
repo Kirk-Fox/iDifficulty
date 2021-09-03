@@ -19,6 +19,8 @@ toggle:
   doubled-loot-chance: true
   # If "true" difficulties will affect the venom of cave spiders and bees
   venom-time: true
+  # If "true" difficulties will affect the health at which a player will stop taking damage from starvation
+  min-health-starvation: true
 
 # A list of difficulties and their properties.
 # You may add or remove difficulties as long as you include values for all difficulty properties (keep-inventory, keep-xp, etc.)
@@ -39,6 +41,8 @@ difficulties:
     # Venom from bees will last 3 seconds longer than the time stated below
     # Set to 0 for no poison effect
     venom-time: 0
+    # Sets the health at which starvation stops dealing damage to the player where 20 is 10 hearts and 0 is 0 hearts
+    min-health-starvation: 10
     # Sets whether this difficulty requires players that use it to have the "idifficulty.diff.[difficulty_name]" permission
     # For example, if set to true for this difficulty, players would need the permission node "idifficulty.diff.easy" to use it
     requires-permission: false
@@ -50,6 +54,7 @@ difficulties:
     damage-multiplier: 1.0
     doubled-loot-chance: 0.05
     venom-time: 7
+    min-health-starvation: 1
     requires-permission: false
 
   hard:
@@ -59,6 +64,7 @@ difficulties:
     damage-multiplier: 1.5
     doubled-loot-chance: 0.2
     venom-time: 15
+    min-health-starvation: 0
     requires-permission: false
 
 # DO NOT CHANGE UNDER ANY CIRCUMSTANCES

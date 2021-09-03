@@ -68,7 +68,8 @@ public final class IDifficulty extends JavaPlugin {
     }
 
     private void registerListeners() {
-        Listener[] listeners = {new BlockBreakListener(), new EntityDamageByEntityListener(), new EntityDeathListener(),
+        Listener[] listeners = {new BlockBreakListener(), new DifficultyChangeListener(), new EntityDamageByEntityListener(),
+                new EntityDamageListener(), new EntityDeathListener(), new FoodLevelChangeListener(),
                 new FurnaceExtractListener(), new PlayerDeathListener(), new PlayerJoinListener(updateString)};
         for(Listener l : listeners) {
             getServer().getPluginManager().registerEvents(l, this);

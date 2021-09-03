@@ -12,7 +12,7 @@ public class ConfigHandler {
     private static final int CONFIG_VERSION = 1;
     private static final String[][] CONFIG_VALUES = {{"keep-inventory", "keepInv"}, {"keep-xp", "keepExp"},
             {"xp-multiplier", "expMod"}, {"damage-multiplier", "damageMod"},
-            {"doubled-loot-chance", "lootChance"}, {"venom-time", "venomTime"}};
+            {"doubled-loot-chance", "lootChance"}, {"venom-time", "venomTime"}, {"min-health-starvation", "minStarveHealth"}};
     private static final Map<String, Boolean> TOGGLE_MAP = new HashMap<>();
 
     private static FileConfiguration config;
