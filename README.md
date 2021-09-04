@@ -37,7 +37,7 @@ In this plugin's configuration, server owner's may do the following
 ## Possible Future Features:
 The following are a few features that I am considering working on in the future
 
-- Hunger effects based on difficulty
+- ~~Hunger effects based on difficulty~~ (to be implemented in v0.2.0)
 - An optional peaceful difficulty that will cause mobs to do no damage but also drop no loot or experience
 - ~~The option to require a permission for certain difficulty settings~~ (to be implemented in v0.2.0)
 - Dividing the chance for double items from mobs and ores into two separate settings (one for mobs and one for ores)
