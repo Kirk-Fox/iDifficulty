@@ -9,7 +9,7 @@ public class FoodLevelChangeListener implements Listener {
 
     @EventHandler
     public void onFoodLevelChange(FoodLevelChangeEvent e) {
-        EntityDamageListener.starveIfApplicable((Player) e.getEntity(), 1.0);
+        EntityDamageListener.starveLater((Player) e.getEntity());
     }
 
 }

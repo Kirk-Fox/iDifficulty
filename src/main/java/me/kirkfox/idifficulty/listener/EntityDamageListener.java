@@ -33,12 +33,15 @@ public class EntityDamageListener implements Listener {
         if(e.getEntity() instanceof Player && e.getCause() == EntityDamageEvent.DamageCause.STARVATION) {
             Player p = (Player) e.getEntity();
             if(shouldStarve(p, e.getDamage())) {
+                STARVING_SET.add(p);
                 new BukkitRunnable() {
                     @Override
                     public void run() {
                         starve(p, e.getDamage());
                     }
                 }.runTaskLater(IDifficulty.getPlugin(), p.getStarvationRate());
+            } else {
+                STARVING_SET.remove(p);
             }
         }
     }
@@ -55,10 +58,19 @@ public class EntityDamageListener implements Listener {
         }
     }
 
-    public static void starveIfApplicable(Player p, double damage) {
-        if(!STARVING_SET.contains(p)) {
-            starve(p, damage);
-        }
+    public static void starveLater(Player p, double damage) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if(!STARVING_SET.contains(p)) {
+                    starve(p, damage);
+                }
+            }
+        }.runTaskLater(IDifficulty.getPlugin(), p.getStarvationRate());
+    }
+
+    public static void starveLater(Player p) {
+        starveLater(p, 1.0);
     }
 
     private static boolean shouldStarve(Player p, double damage) {

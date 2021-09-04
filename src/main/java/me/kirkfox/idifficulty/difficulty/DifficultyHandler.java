@@ -1,6 +1,8 @@
 package me.kirkfox.idifficulty.difficulty;
 
 import me.kirkfox.idifficulty.ConfigHandler;
+import me.kirkfox.idifficulty.event.DifficultyChangeEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,19 +36,22 @@ public class DifficultyHandler {
     }
 
     @NotNull
-    public static PlayerDifficulty getPlayerDifficulty(Player player) {
-        PlayerDifficulty d = DifficultyStorage.readDifficulty(player.getUniqueId());
-        return (d != null) ? d : DifficultyStorage.createDifficulty(player.getUniqueId());
+    public static PlayerDifficulty getPlayerDifficulty(Player p) {
+        PlayerDifficulty d = DifficultyStorage.readDifficulty(p.getUniqueId());
+        return (d != null) ? d : DifficultyStorage.createDifficulty(p.getUniqueId());
     }
 
     @NotNull
-    public static PlayerDifficulty setPlayerDifficulty(Player player, Difficulty d) {
-        PlayerDifficulty pd = DifficultyStorage.updateDifficulty(player.getUniqueId(), d);
-        return (pd != null) ? pd : DifficultyStorage.createDifficulty(player.getUniqueId(), d);
+    public static PlayerDifficulty setPlayerDifficulty(Player p, Difficulty d) {
+        DifficultyChangeEvent e = new DifficultyChangeEvent(p, getPlayerDifficulty(p), d);
+        Bukkit.getPluginManager().callEvent(e);
+        Difficulty newD = e.getNewDifficulty();
+        PlayerDifficulty pd = DifficultyStorage.updateDifficulty(p.getUniqueId(), newD);
+        return (pd != null) ? pd : DifficultyStorage.createDifficulty(p.getUniqueId(), newD);
     }
 
-    public static void updatePlayerDifficulty(Player player) {
-        UUID uuid = player.getUniqueId();
+    public static void updatePlayerDifficulty(Player p) {
+        UUID uuid = p.getUniqueId();
         PlayerDifficulty pd = DifficultyStorage.readDifficulty(uuid);
         if(pd == null) {
             DifficultyStorage.createDifficulty(uuid, defaultDifficulty);

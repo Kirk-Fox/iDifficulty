@@ -8,7 +8,7 @@ public class DifficultyChangeListener implements Listener {
 
     @EventHandler
     public void onDifficultyChange(DifficultyChangeEvent e) {
-        EntityDamageListener.starveIfApplicable(e.getPlayer(), 1.0);
+        EntityDamageListener.starveLater(e.getPlayer());
     }
 
 }
