@@ -41,6 +41,7 @@ public class EntityDamageListener implements Listener {
                     }
                 }.runTaskLater(IDifficulty.getPlugin(), p.getStarvationRate());
             } else {
+                if(shouldNotStarve(p, e.getDamage())) e.setCancelled(true);
                 STARVING_SET.remove(p);
             }
         }
@@ -82,6 +83,11 @@ public class EntityDamageListener implements Listener {
 
     private static boolean shouldStarve(Player p) {
         return shouldStarve(p, 0.0);
+    }
+
+    private static boolean shouldNotStarve(Player p, double damage) {
+        return ConfigHandler.getToggle("minStarveHealth") &&
+                DifficultyHandler.getPlayerDifficulty(p).getMinStarveHealth() > p.getHealth() - damage;
     }
 
 }
