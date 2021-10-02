@@ -24,8 +24,6 @@ public class DifficultyCommand implements CommandExecutor {
     private static final ChatColor COLOR_CMD = ChatColor.GOLD;
     private static final ChatColor COLOR_ERROR = ChatColor.RED;
 
-    private boolean isOp;
-
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         boolean isPlayer = sender instanceof Player;
@@ -33,7 +31,6 @@ public class DifficultyCommand implements CommandExecutor {
         if(isPlayer) {
             player = (Player) sender;
         }
-        isOp = sender.isOp();
         if(args.length == 0) {
             PluginDescriptionFile description = IDifficulty.getPlugin().getDescription();
             sender.sendMessage(COLOR_MAIN + "This server is running " + COLOR_CMD + description.getName() +
@@ -99,31 +96,31 @@ public class DifficultyCommand implements CommandExecutor {
 
     private void helpDifficulty(CommandSender sender, boolean isPlayer) {
         boolean hasPerm = false;
-        if((isOp || sender.hasPermission(PERMISSION + "set")) && isPlayer) {
+        if(sender.hasPermission(PERMISSION + "set") && isPlayer) {
             sender.sendMessage(COLOR_CMD + "/idiff set <difficulty>" + COLOR_MAIN +
                     " - Sets your difficulty");
             hasPerm = true;
         }
-        if(isOp || sender.hasPermission(PERMISSION + "set.others")) {
+        if(sender.hasPermission(PERMISSION + "set.others")) {
             sender.sendMessage(COLOR_CMD + "/idiff set <difficulty> <player>" + COLOR_MAIN + " - Sets " +
                     COLOR_CMD + "<player>" + COLOR_MAIN + "'s difficulty");
             hasPerm = true;
         }
-        if(isOp || sender.hasPermission(PERMISSION + "list")) {
+        if(sender.hasPermission(PERMISSION + "list")) {
             sender.sendMessage(COLOR_CMD + "/idiff list" + COLOR_MAIN + " - Gives a list of difficulties");
             hasPerm = true;
         }
-        if(isOp || sender.hasPermission(PERMISSION + "info")) {
+        if(sender.hasPermission(PERMISSION + "info")) {
             sender.sendMessage(COLOR_CMD + "/idiff info <difficulty>" + COLOR_MAIN +
                     " - Gives info on " + COLOR_CMD + "<difficulty>");
             hasPerm = true;
         }
-        if((isOp || sender.hasPermission(PERMISSION + "view")) && isPlayer) {
+        if((sender.hasPermission(PERMISSION + "view")) && isPlayer) {
             sender.sendMessage(COLOR_CMD + "/idiff view" + COLOR_MAIN +
                     " - Gives your current difficulty");
             hasPerm = true;
         }
-        if(isOp || sender.hasPermission(PERMISSION + "view.others")) {
+        if(sender.hasPermission(PERMISSION + "view.others")) {
             sender.sendMessage(COLOR_CMD + "/idiff view <player>" + COLOR_MAIN + " - Gives " +
                     COLOR_CMD + "<player>" + COLOR_MAIN + "'s current difficulty");
             hasPerm = true;
@@ -172,9 +169,9 @@ public class DifficultyCommand implements CommandExecutor {
         Date dateChanged = pd.getDateChanged();
         long timeDelay = IDifficulty.getPlugin().getConfig().getLong("time-delay");
         if(dateChanged == null || (date.after(new Date(dateChanged.getTime() + timeDelay * 60000)) && timeDelay > -1) ||
-                player.hasPermission(PERMISSION + "ignoredelay") || isOp || skipPerm) {
-            if(isOp || player.hasPermission(PERMISSION + "set") || skipPerm) {
-                if(!d.getNeedsPermission() || isOp || player.hasPermission(PERMISSION + "diff." + d.getName()) || skipPerm) {
+                player.hasPermission(PERMISSION + "ignoredelay") || skipPerm) {
+            if(player.hasPermission(PERMISSION + "set") || skipPerm) {
+                if(!d.getNeedsPermission() || player.hasPermission(PERMISSION + "diff." + d.getName()) || skipPerm) {
                     pd.setDateChanged(date);
                     String dName = DifficultyHandler.setPlayerDifficulty(player, d).getNameFormatted();
                     player.sendMessage(COLOR_MAIN + "Your difficulty has been changed to " + dName);
@@ -198,9 +195,9 @@ public class DifficultyCommand implements CommandExecutor {
         Player p = IDifficulty.getPlayer(pName);
         if(sender.equals(p)) {
             setDifficulty(p, d, false);
-        } else if(isOp || sender.hasPermission(PERMISSION + "set.others")) {
+        } else if(sender.hasPermission(PERMISSION + "set.others")) {
             if(p != null) {
-                if(!d.getNeedsPermission() || isOp || sender.hasPermission(PERMISSION + "diff." + d.getName())){
+                if(!d.getNeedsPermission() || sender.hasPermission(PERMISSION + "diff." + d.getName())){
                     String dName = setDifficulty(p, d, true);
                     sender.sendMessage(COLOR_MAIN + p.getName() + "'s difficulty has been changed to " + dName);
                 }
@@ -213,7 +210,7 @@ public class DifficultyCommand implements CommandExecutor {
     }
 
     private void sendDifficultyList(CommandSender sender) {
-        if(isOp || sender.hasPermission(PERMISSION + "list")) {
+        if(sender.hasPermission(PERMISSION + "list")) {
             List<Difficulty> dList = DifficultyHandler.getDifficultyList();
             StringBuilder dString = new StringBuilder();
             int s = dList.size();
@@ -228,7 +225,7 @@ public class DifficultyCommand implements CommandExecutor {
     }
 
     private void sendDifficultyInfo(CommandSender sender, String difficulty) {
-        if(isOp || sender.hasPermission(PERMISSION + "info")) {
+        if(sender.hasPermission(PERMISSION + "info")) {
             Difficulty d = DifficultyHandler.getDifficulty(difficulty);
             if (d != null) {
                 int venomTime = d.getVenomTime();
@@ -262,7 +259,7 @@ public class DifficultyCommand implements CommandExecutor {
     }
 
     private void viewDifficulty(Player player) {
-        if(isOp || player.hasPermission(PERMISSION + "view")) {
+        if(player.hasPermission(PERMISSION + "view")) {
             player.sendMessage(COLOR_MAIN + "Your current difficulty is " +
                     DifficultyHandler.getPlayerDifficulty(player).getNameFormatted());
         } else {
@@ -274,7 +271,7 @@ public class DifficultyCommand implements CommandExecutor {
         Player p = IDifficulty.getPlayer(pName);
         if(sender.equals(p)) {
             viewDifficulty(p);
-        } else if(isOp || sender.hasPermission(PERMISSION + "view.others")) {
+        } else if(sender.hasPermission(PERMISSION + "view.others")) {
             if(p != null) {
                 sender.sendMessage(COLOR_MAIN + p.getName() + "'s current difficulty is " +
                         DifficultyHandler.getPlayerDifficulty(p).getNameFormatted());

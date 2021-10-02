@@ -11,7 +11,7 @@ commands:
     aliases: idiff
 permissions:
   idifficulty.*:
-    default: false
+    default: op
     children:
       idifficulty.view: true
       idifficulty.view.others: true
@@ -22,14 +22,14 @@ permissions:
   idifficulty.view:
     default: true
   idifficulty.view.others:
-    default: false
+    default: op
   idifficulty.set:
     default: true
   idifficulty.set.others:
-    default: false
+    default: op
   idifficulty.list:
     default: true
   idifficulty.info:
     default: true
   idifficulty.ignoredelay:
-    default: false
+    default: op
