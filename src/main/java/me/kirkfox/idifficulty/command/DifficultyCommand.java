@@ -229,7 +229,7 @@ public class DifficultyCommand implements CommandExecutor {
             Difficulty d = DifficultyHandler.getDifficulty(difficulty);
             if (d != null) {
                 int venomTime = d.getVenomTime();
-                double minStarveHealth = d.getMinStarveHealth();
+                int minStarveHealth = d.getMinStarveHealth();
                 sender.sendMessage(COLOR_MAIN + "The " + d.getNameFormatted() + " difficulty setting will make the following changes:");
                 if(ConfigHandler.getToggle("keepInv")) sender.sendMessage(COLOR_MAIN + "Player will " + COLOR_CMD +
                         (d.getKeepInv() ? "keep" : "drop") + COLOR_MAIN + " items on death.");

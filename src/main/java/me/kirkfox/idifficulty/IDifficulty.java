@@ -10,11 +10,11 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Objects;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -23,7 +23,7 @@ public final class IDifficulty extends JavaPlugin {
     private static IDifficulty plugin;
     private static Random rand;
 
-    private String updateString = null;
+    private static String updateString = null;
 
     private static final int RESOURCE_ID = 95730;
 
@@ -62,7 +62,8 @@ public final class IDifficulty extends JavaPlugin {
     }
 
     private void registerCommand() {
-        PluginCommand pc = Objects.requireNonNull(getCommand("idifficulty"));
+        PluginCommand pc = getCommand("idifficulty");
+        assert pc != null;
         pc.setExecutor(new DifficultyCommand());
         pc.setTabCompleter(new DifficultyTabCompleter());
     }
@@ -71,7 +72,7 @@ public final class IDifficulty extends JavaPlugin {
         Listener[] listeners = {new BlockBreakListener(), new DifficultyChangeListener(), new EntityDamageByEntityListener(),
                 new EntityDamageListener(), new EntityDeathListener(), new EntityRegainHealthListener(),
                 new FoodLevelChangeListener(), new FurnaceExtractListener(), new PlayerDeathListener(),
-                new PlayerJoinListener(updateString)};
+                new PlayerJoinListener()};
         for(Listener l : listeners) {
             getServer().getPluginManager().registerEvents(l, this);
         }
@@ -93,6 +94,11 @@ public final class IDifficulty extends JavaPlugin {
                 outputLog("Cannot look for updates: " + e.getMessage());
             }
         });
+    }
+
+    @Nullable
+    public static String getUpdateString() {
+        return updateString;
     }
 
     public static void outputLog(String msg) {

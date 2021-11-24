@@ -1,6 +1,6 @@
 package me.kirkfox.idifficulty.difficulty;
 
-import org.bukkit.configuration.ConfigurationSection;
+import me.kirkfox.idifficulty.ConfigHandler;
 
 public class Difficulty {
 
@@ -11,19 +11,19 @@ public class Difficulty {
     private double damageMod;
     private double lootChance;
     private int venomTime;
-    private double minStarveHealth;
+    private int minStarveHealth;
     private boolean needsPermission;
 
-    public Difficulty(ConfigurationSection d) {
-        this.name = d.getName();
-        this.keepInv = d.getBoolean("keep-inventory");
-        this.keepExp = d.getBoolean("keep-xp");
-        this.expMod = d.getDouble("xp-multiplier");
-        this.damageMod = d.getDouble("damage-multiplier");
-        this.lootChance = d.getDouble("doubled-loot-chance");
-        this.venomTime = d.getInt("venom-time");
-        this.minStarveHealth = d.getDouble("min-health-starvation");
-        this.needsPermission = d.getBoolean("requires-permission");
+    public Difficulty(String name) {
+        this.name = name;
+        this.keepInv = (boolean) ConfigHandler.getDifficultyValue(name, "keep-inventory");
+        this.keepExp = (boolean) ConfigHandler.getDifficultyValue(name, "keep-xp");
+        this.expMod = (double) ConfigHandler.getDifficultyValue(name, "xp-multiplier");
+        this.damageMod = (double) ConfigHandler.getDifficultyValue(name, "damage-multiplier");
+        this.lootChance = (double) ConfigHandler.getDifficultyValue(name, "doubled-loot-chance");
+        this.venomTime = (int) ConfigHandler.getDifficultyValue(name, "venom-time");
+        this.minStarveHealth = (int) ConfigHandler.getDifficultyValue(name, "min-health-starvation");
+        this.needsPermission = (boolean) ConfigHandler.getDifficultyValue(name, "requires-permission");
     }
 
     public Difficulty(Difficulty d) {
@@ -74,7 +74,7 @@ public class Difficulty {
         return venomTime;
     }
 
-    public double getMinStarveHealth() {
+    public int getMinStarveHealth() {
         return minStarveHealth;
     }
 
