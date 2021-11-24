@@ -229,7 +229,8 @@ public class DifficultyCommand implements CommandExecutor {
             Difficulty d = DifficultyHandler.getDifficulty(difficulty);
             if (d != null) {
                 int venomTime = d.getVenomTime();
-                int minStarveHealth = d.getMinStarveHealth();
+                int h = d.getMinStarveHealth();
+                String starveHealth = (h%2==0) ? String.valueOf(h/2) : String.valueOf((double) h/2);
                 sender.sendMessage(COLOR_MAIN + "The " + d.getNameFormatted() + " difficulty setting will make the following changes:");
                 if(ConfigHandler.getToggle("keepInv")) sender.sendMessage(COLOR_MAIN + "Player will " + COLOR_CMD +
                         (d.getKeepInv() ? "keep" : "drop") + COLOR_MAIN + " items on death.");
@@ -247,7 +248,7 @@ public class DifficultyCommand implements CommandExecutor {
                         (venomTime > 0 ? "" : COLOR_CMD + "not " + COLOR_MAIN) + "be poisoned by cave spiders" +
                         (venomTime > 0 ? " for " + COLOR_CMD + venomTime + COLOR_MAIN + " second" + (venomTime == 1 ? "" : "s") : ""));
                 if(ConfigHandler.getToggle("minStarveHealth")) sender.sendMessage(COLOR_MAIN + "Player will starve to " +
-                        COLOR_CMD + (minStarveHealth <= 0 ? "death" : minStarveHealth/2 + (COLOR_MAIN + " hearts of health before stopping")));
+                        COLOR_CMD + (h <= 0 ? "death" : starveHealth + (COLOR_MAIN + " hearts of health before stopping")));
                 sender.sendMessage(COLOR_MAIN + "To change to this difficulty, type: " + COLOR_CMD + "/idiff set " + d.getName());
             } else {
                 sender.sendMessage(COLOR_ERROR + "Invalid option for <difficulty>. Type " +
