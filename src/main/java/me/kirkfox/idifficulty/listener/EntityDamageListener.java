@@ -20,6 +20,7 @@ public class EntityDamageListener implements Listener {
 
     private static final Map<Difficulty, Double> HEALTH_MAP = new HashMap<>();
     private static final Set<Player> STARVING_SET = new HashSet<>();
+    private static final Set<Player> DYING_SET = new HashSet<>();
 
     public EntityDamageListener() {
         HEALTH_MAP.put(Difficulty.PEACEFUL, 20.0);
@@ -30,19 +31,23 @@ public class EntityDamageListener implements Listener {
 
     @EventHandler
     public void onEntityDamage(EntityDamageEvent e) {
-        if(e.getEntity() instanceof Player && e.getCause() == EntityDamageEvent.DamageCause.STARVATION) {
+        if(e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
-            if(shouldStarve(p, e.getDamage())) {
-                STARVING_SET.add(p);
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        starve(p, e.getDamage());
-                    }
-                }.runTaskLater(IDifficulty.getPlugin(), p.getStarvationRate());
+            if(e.getCause() == EntityDamageEvent.DamageCause.STARVATION) {
+                if(shouldStarve(p, e.getDamage())) {
+                    STARVING_SET.add(p);
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            starve(p, e.getDamage());
+                        }
+                    }.runTaskLater(IDifficulty.getPlugin(), p.getStarvationRate());
+                } else {
+                    if(shouldNotStarve(p, e.getDamage())) e.setCancelled(true);
+                    STARVING_SET.remove(p);
+                }
             } else {
-                if(shouldNotStarve(p, e.getDamage())) e.setCancelled(true);
-                STARVING_SET.remove(p);
+                starveLater(p);
             }
         }
     }
@@ -53,7 +58,9 @@ public class EntityDamageListener implements Listener {
             EntityDamageEvent starveEvent = new EntityDamageEvent(p,
                     EntityDamageEvent.DamageCause.STARVATION, damage);
             Bukkit.getPluginManager().callEvent(starveEvent);
-            p.damage(starveEvent.getDamage());
+            double d = starveEvent.getDamage();
+            if(p.getHealth() <= d) DYING_SET.add(p);
+            p.damage(d);
         } else {
             STARVING_SET.remove(p);
         }
@@ -88,6 +95,14 @@ public class EntityDamageListener implements Listener {
     private static boolean shouldNotStarve(Player p, double damage) {
         return ConfigHandler.getToggle("minStarveHealth") &&
                 DifficultyHandler.getPlayerDifficulty(p).getMinStarveHealth() > p.getHealth() - damage;
+    }
+
+    public static boolean isDyingFromStarvation(Player p) {
+        if(DYING_SET.contains(p)) {
+            DYING_SET.remove(p);
+            return true;
+        }
+        return false;
     }
 
 }

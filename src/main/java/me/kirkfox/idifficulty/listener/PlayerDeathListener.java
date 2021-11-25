@@ -39,6 +39,10 @@ public class PlayerDeathListener implements Listener {
             e.setKeepLevel(keepExp);
             e.setDroppedExp(keepExp ? 0 : Math.min(7*p.getLevel(), 100));
         }
+
+        if(EntityDamageListener.isDyingFromStarvation(p)) {
+            e.setDeathMessage(p.getName() + " starved to death");
+        }
     }
 
 }
