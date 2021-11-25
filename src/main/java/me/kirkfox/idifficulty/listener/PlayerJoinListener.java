@@ -17,7 +17,7 @@ public class PlayerJoinListener implements Listener {
         DifficultyHandler.updatePlayerDifficulty(p);
         EntityDamageListener.starveLater(p);
         String u = IDifficulty.getUpdateString();
-        if(u != null && (p.isOp() || p.hasPermission("idifficulty.*"))) {
+        if(u != null && p.hasPermission("idifficulty.updatecheck")) {
             p.sendMessage(ChatColor.DARK_AQUA + u);
         }
     }
