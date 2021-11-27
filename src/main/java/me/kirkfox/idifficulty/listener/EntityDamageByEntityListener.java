@@ -30,8 +30,9 @@ public class EntityDamageByEntityListener implements Listener {
             } catch (NoSuchFieldError error) {
                 isBee = false;
             }
-            if(ConfigHandler.getToggle("venomTime") && (isCaveSpider || isBee)) {
-                p.damage(damage, d);
+            e.setDamage(damage);
+            if(ConfigHandler.getToggle("venomTime") && (isCaveSpider || isBee) && p.getHealth() > e.getFinalDamage()) {
+                p.damage(e.getFinalDamage());
                 int venomTime = pd.getVenomTime();
                 if(venomTime > 0) {
                     p.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 20*(pd.getVenomTime() + (isBee ? 3 : 0)), 0));
@@ -41,7 +42,6 @@ public class EntityDamageByEntityListener implements Listener {
                 }
                 e.setCancelled(true);
             }
-            e.setDamage(damage);
         }
     }
 
