@@ -15,12 +15,23 @@ public class ConfigHandler {
             {"doubled-loot-chance", "lootChance"}, {"venom-time", "venomTime"}, {"min-health-starvation", "minStarveHealth"}};
     private static final Map<String, Boolean> TOGGLE_MAP = new HashMap<>();
 
+    private static JavaPlugin plugin;
     private static FileConfiguration config;
     private static ConfigurationSection diffConfig;
     private static Set<String> diffKeys;
 
-    public static void registerConfig(JavaPlugin plugin) {
+    public static void registerConfig() {
+        plugin = IDifficulty.getPlugin();
         plugin.saveDefaultConfig();
+        enableConfig();
+    }
+
+    public static void reloadConfig() {
+        plugin.reloadConfig();
+        enableConfig();
+    }
+
+    private static void enableConfig() {
         config = plugin.getConfig();
         diffConfig = Objects.requireNonNull(config.getConfigurationSection("difficulties"));
         diffKeys = diffConfig.getKeys(false);

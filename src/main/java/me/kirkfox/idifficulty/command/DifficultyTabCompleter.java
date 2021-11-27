@@ -8,7 +8,6 @@ import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class DifficultyTabCompleter implements TabCompleter {
@@ -16,13 +15,19 @@ public class DifficultyTabCompleter implements TabCompleter {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command,
                                       @NotNull String alias, @NotNull String[] args) {
-        List<String> commandList = new ArrayList<>(Arrays.asList("set", "list", "info", "view", "help"));
+        String[] commands = {"set", "list", "info", "view", "reload", "help"};
+        List<String> commandList = new ArrayList<>();
+        for (String c : commands) {
+            if (sender.hasPermission("idifficulty." + c) || c.equals("help")) commandList.add(c);
+        }
         if(args.length == 1) {
             return commandList;
         }
         List<String> difficultyList = new ArrayList<>();
         for (Difficulty d : DifficultyHandler.getDifficultyList()) {
-            difficultyList.add(d.getName());
+            if(!d.getNeedsPermission() || sender.hasPermission("idifficulty." + d.getName())) {
+                difficultyList.add(d.getName());
+            }
         }
         if(args.length == 2) {
             if("set".equals(args[0]) || "info".equals(args[0])) {

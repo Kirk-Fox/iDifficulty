@@ -33,7 +33,7 @@ public final class IDifficulty extends JavaPlugin {
         plugin = this;
         rand = new Random();
 
-        ConfigHandler.registerConfig(this);
+        ConfigHandler.registerConfig();
         DifficultyHandler.registerDifficulties();
 
         registerCommand();

@@ -87,6 +87,14 @@ public class DifficultyCommand implements CommandExecutor {
                     viewDifficultyOthers(sender, args[1]);
                 }
                 break;
+            case "reload":
+                if(sender.hasPermission(PERMISSION + "reload")) {
+                    ConfigHandler.reloadConfig();
+                    sender.sendMessage(COLOR_MAIN + "iDifficulty config file reloaded!");
+                } else {
+                    sender.sendMessage(COLOR_ERROR + "You don't have permission to reload the iDifficulty config file!");
+                }
+                break;
             default:
                 sender.sendMessage(COLOR_ERROR + "Unrecognized subcommand! Type " + COLOR_CMD +
                         "/idiff help" + COLOR_ERROR + " for a list of possible commands.");
@@ -125,6 +133,9 @@ public class DifficultyCommand implements CommandExecutor {
                     COLOR_CMD + "<player>" + COLOR_MAIN + "'s current difficulty");
             hasPerm = true;
         }
+        if(sender.hasPermission(PERMISSION + "reload")) {
+            sender.sendMessage(COLOR_CMD + "/idiff reload" + COLOR_MAIN + " - Reloads iDifficulty config file");
+        }
         if(!hasPerm) {
             sender.sendMessage(COLOR_ERROR + "You don't have access to any commands associated with the iDifficulty plugin. " +
                     "Notify an administrator if you think this is a mistake.");
@@ -156,6 +167,9 @@ public class DifficultyCommand implements CommandExecutor {
                 sender.sendMessage(commandUsage + " [<player>]",
                     COLOR_MAIN + "Use this command to set your own difficulty to view your own difficulty or view " +
                             COLOR_CMD + "<player>" + COLOR_MAIN + "'s difficulty");
+                break;
+            case "reload":
+                sender.sendMessage(commandUsage, COLOR_MAIN + "Use this command to reload iDifficulty's config.yml file");
                 break;
             default:
                 sender.sendMessage(COLOR_ERROR + "Unrecognized subcommand! Type " + COLOR_CMD +
@@ -231,7 +245,8 @@ public class DifficultyCommand implements CommandExecutor {
                 int venomTime = d.getVenomTime();
                 int h = d.getMinStarveHealth();
                 String starveHealth = (h%2==0) ? String.valueOf(h/2) : String.valueOf((double) h/2);
-                sender.sendMessage(COLOR_MAIN + "The " + d.getNameFormatted() + " difficulty setting will make the following changes:");
+                sender.sendMessage(ChatColor.BLUE + "The " + COLOR_CMD + d.getNameFormatted() + ChatColor.BLUE +
+                        " difficulty setting will make the following changes:");
                 if(ConfigHandler.getToggle("keepInv")) sender.sendMessage(COLOR_MAIN + "Player will " + COLOR_CMD +
                         (d.getKeepInv() ? "keep" : "drop") + COLOR_MAIN + " items on death.");
                 if(ConfigHandler.getToggle("keepExp")) sender.sendMessage(COLOR_MAIN + "Player will " + COLOR_CMD +
