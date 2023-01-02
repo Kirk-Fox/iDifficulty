@@ -25,7 +25,7 @@ public class DifficultyTabCompleter implements TabCompleter {
         }
         List<String> difficultyList = new ArrayList<>();
         for (Difficulty d : DifficultyHandler.getDifficultyList()) {
-            if(!d.getNeedsPermission() || sender.hasPermission("idifficulty." + d.getName())) {
+            if(!d.getNeedsPermission() || sender.hasPermission("idifficulty.diff." + d.getName())) {
                 difficultyList.add(d.getName());
             }
         }

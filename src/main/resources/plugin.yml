@@ -19,6 +19,7 @@ permissions:
       idifficulty.set.others: true
       idifficulty.list: true
       idifficulty.info: true
+      idifficulty.ignoredelay: true
       idifficulty.reload: true
       idifficulty.updatecheck: true
   idifficulty.view:
