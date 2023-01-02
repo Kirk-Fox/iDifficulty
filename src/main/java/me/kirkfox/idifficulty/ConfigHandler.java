@@ -29,6 +29,8 @@ public class ConfigHandler {
     public static void reloadConfig() {
         plugin.reloadConfig();
         enableConfig();
+        DifficultyHandler.registerDifficulties();
+        DifficultyHandler.updateAllPlayerDifficulties();
     }
 
     private static void enableConfig() {

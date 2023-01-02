@@ -1,6 +1,7 @@
 package me.kirkfox.idifficulty.difficulty;
 
 import me.kirkfox.idifficulty.ConfigHandler;
+import me.kirkfox.idifficulty.IDifficulty;
 import me.kirkfox.idifficulty.event.DifficultyChangeEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -60,6 +61,12 @@ public class DifficultyHandler {
             DifficultyStorage.updateDifficulty(uuid, d != null ? d : defaultDifficulty);
         }
 
+    }
+
+    public static void updateAllPlayerDifficulties() {
+        for(Player p : IDifficulty.getPlugin().getServer().getOnlinePlayers()) {
+            updatePlayerDifficulty(p);
+        }
     }
 
     public static Difficulty getDefaultDifficulty() {
