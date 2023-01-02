@@ -40,10 +40,10 @@ The following are a few features that I am considering working on in the future
 - ~~Hunger effects based on difficulty~~ (to be implemented in v0.2.0)
 - An optional peaceful difficulty that will cause mobs to do no damage but also drop no loot or experience
 - ~~The option to require a permission for certain difficulty settings~~ (to be implemented in v0.2.0)
-- Dividing the chance for double items from mobs and ores into two separate settings (one for mobs and one for ores)
-- Dividing the experience bonus from mobs and ores into two separate settings (one for mobs and one for ores)
+- ~~Dividing the chance for double items from mobs and ores into two separate settings (one for mobs and one for ores)~~ (to be implemented in v0.2.0)
+- ~~Dividing the experience bonus from mobs and ores into two separate settings (one for mobs and one for ores)~~ (to be implemented in v0.2.0)
 - Vault interaction involving losing an amount of money on death depending on difficulty (far future)
 - Plugin integration that will revoke or give permissions to players depending on their difficulty (far future)
-- Further backwards compatibility (if possible)
+- ~~Further backwards compatibility~~ (Backwards compatability to 1.8 will likely be implemented in v0.2.0)
 
 If you notice any issues, please report them on the issues tab
