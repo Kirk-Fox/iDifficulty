@@ -1,6 +1,7 @@
 package me.kirkfox.idifficulty;
 
 import me.kirkfox.idifficulty.difficulty.Difficulty;
+import me.kirkfox.idifficulty.difficulty.DifficultyHandler;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -11,8 +12,9 @@ public class ConfigHandler {
 
     private static final int CONFIG_VERSION = 1;
     private static final String[][] CONFIG_VALUES = {{"keep-inventory", "keepInv"}, {"keep-xp", "keepExp"},
-            {"xp-multiplier", "expMod"}, {"damage-multiplier", "damageMod"},
-            {"doubled-loot-chance", "lootChance"}, {"venom-time", "venomTime"}, {"min-health-starvation", "minStarveHealth"}};
+            {"mob-xp-multiplier", "mobExpMod"}, {"ore-xp-multiplier", "oreExpMod"}, {"damage-multiplier", "damageMod"},
+            {"mob-doubled-loot-chance", "mobLootChance"}, {"ore-doubled-loot-chance", "oreLootChance"},
+            {"venom-time", "venomTime"}, {"min-health-starvation", "minStarveHealth"}};
     private static final Map<String, Boolean> TOGGLE_MAP = new HashMap<>();
 
     private static JavaPlugin plugin;
@@ -40,7 +42,19 @@ public class ConfigHandler {
         if(!config.contains("config-version", true)) {
             config.createSection("config-version");
             config.set("config-version", CONFIG_VERSION);
+
+            Objects.requireNonNull(config.getConfigurationSection("toggle")).set("min-health-starvation", false);
+
+            updateMobOreConfig("toggle", "xp-multiplier");
+            updateMobOreConfig("toggle", "doubled-loot-chance");
+            for (String key : diffKeys) {
+                updateMobOreConfig("difficulties." + key, "xp-multiplier");
+                updateMobOreConfig("difficulties." + key, "doubled-loot-chance");
+            }
+
+            addToConfig("min-health-starvation", 10);
             addToConfig("requires-permission", false);
+
             plugin.saveConfig();
             IDifficulty.outputLog("Config updated!");
         }
@@ -54,6 +68,13 @@ public class ConfigHandler {
         for (String key : diffKeys) {
             diffConfig.set(key + "." + path, value);
         }
+    }
+
+    private static void updateMobOreConfig(String key, String path) {
+        Object mod = config.get(key + "." + path);
+        config.set(key + "." + path, null);
+        config.set(key + ".mob-" + path, mod);
+        config.set(key + ".ore-" + path, mod);
     }
 
     public static Map<String, Boolean> getToggleMap() {

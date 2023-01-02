@@ -7,79 +7,73 @@ public class Difficulty {
     private String name;
     private boolean keepInv;
     private boolean keepExp;
-    private double expMod;
+    private double mobExpMod;
+    private double oreExpMod;
     private double damageMod;
-    private double lootChance;
+    private double mobLootChance;
+    private double oreLootChance;
     private int venomTime;
     private int minStarveHealth;
     private boolean needsPermission;
 
     public Difficulty(String name) {
         this.name = name;
-        this.keepInv = (boolean) ConfigHandler.getDifficultyValue(name, "keep-inventory");
-        this.keepExp = (boolean) ConfigHandler.getDifficultyValue(name, "keep-xp");
-        this.expMod = (double) ConfigHandler.getDifficultyValue(name, "xp-multiplier");
-        this.damageMod = (double) ConfigHandler.getDifficultyValue(name, "damage-multiplier");
-        this.lootChance = (double) ConfigHandler.getDifficultyValue(name, "doubled-loot-chance");
-        this.venomTime = (int) ConfigHandler.getDifficultyValue(name, "venom-time");
-        this.minStarveHealth = (int) ConfigHandler.getDifficultyValue(name, "min-health-starvation");
-        this.needsPermission = (boolean) ConfigHandler.getDifficultyValue(name, "requires-permission");
+        this.keepInv = (boolean) getValue("keep-inventory");
+        this.keepExp = (boolean) getValue("keep-xp");
+        this.mobExpMod = (double) getValue("mob-xp-multiplier");
+        this.oreExpMod = (double) getValue("ore-xp-multiplier");
+        this.damageMod = (double) getValue("damage-multiplier");
+        this.mobLootChance = (double) getValue("mob-doubled-loot-chance");
+        this.oreLootChance = (double) getValue("ore-doubled-loot-chance");
+        this.venomTime = (int) getValue("venom-time");
+        this.minStarveHealth = (int) getValue("min-health-starvation");
+        this.needsPermission = (boolean) getValue("requires-permission");
     }
 
     public Difficulty(Difficulty d) {
         setDifficulty(d);
     }
 
+    private Object getValue(String key) { return ConfigHandler.getDifficultyValue(this.name, key); }
+
     protected void setDifficulty(Difficulty d) {
         name = d.getName();
         keepInv = d.getKeepInv();
         keepExp = d.getKeepExp();
-        expMod = d.getExpMod();
+        mobExpMod = d.getMobExpMod();
+        oreExpMod = d.getOreExpMod();
         damageMod = d.getDamageMod();
-        lootChance = d.getLootChance();
+        mobLootChance = d.getMobLootChance();
+        oreLootChance = d.getOreLootChance();
         venomTime = d.getVenomTime();
         minStarveHealth = d.getMinStarveHealth();
         needsPermission = d.getNeedsPermission();
     }
 
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
 
     public String getNameFormatted() {
         return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
     }
 
-    public boolean getKeepInv() {
-        return keepInv;
-    }
+    public boolean getKeepInv() { return keepInv; }
 
-    public boolean getKeepExp() {
-        return keepExp;
-    }
+    public boolean getKeepExp() { return keepExp; }
 
-    public double getExpMod() {
-        return expMod;
-    }
+    public double getMobExpMod() { return mobExpMod; }
 
-    public double getDamageMod() {
-        return damageMod;
-    }
+    public double getOreExpMod() { return oreExpMod; }
 
-    public double getLootChance() {
-        return lootChance;
-    }
+    public double getDamageMod() { return damageMod; }
 
-    public int getVenomTime() {
-        return venomTime;
-    }
+    public double getMobLootChance() { return mobLootChance; }
 
-    public int getMinStarveHealth() {
-        return minStarveHealth;
-    }
+    public double getOreLootChance() {return oreLootChance; }
 
-    public boolean getNeedsPermission() {
-        return needsPermission;
-    }
+    public int getVenomTime() { return venomTime; }
+
+    public int getMinStarveHealth() { return minStarveHealth; }
+
+    public boolean getNeedsPermission() { return needsPermission; }
 
 }

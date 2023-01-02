@@ -253,12 +253,16 @@ public class DifficultyCommand implements CommandExecutor {
                         (d.getKeepExp() ? "keep" : "drop") + COLOR_MAIN + " experience on death.");
                 if(ConfigHandler.getToggle("damageMod")) sender.sendMessage(COLOR_MAIN + "Player will take " + COLOR_CMD +
                         Math.round(d.getDamageMod()*100) + "%" + COLOR_MAIN + " of regular damage from mobs");
-                if(ConfigHandler.getToggle("expMod")) sender.sendMessage(COLOR_MAIN + "Player will acquire " + COLOR_CMD +
-                        Math.round(d.getExpMod()*100) + "%" + COLOR_MAIN + " of regular experience when killing mobs, " +
-                        "mining blocks, and using furnaces");
-                if(ConfigHandler.getToggle("lootChance")) sender.sendMessage(COLOR_MAIN + "There is a " + COLOR_CMD +
-                        Math.round(d.getLootChance()*100) + "%" + COLOR_MAIN + " chance that blocks mined and mobs " +
-                        "killed by the player will drop twice as many items");
+                if(ConfigHandler.getToggle("mobExpMod")) sender.sendMessage(COLOR_MAIN + "Player will acquire " + COLOR_CMD +
+                        Math.round(d.getMobExpMod()*100) + "%" + COLOR_MAIN + " of regular experience when killing mobs");
+                if(ConfigHandler.getToggle("oreExpMod")) sender.sendMessage(COLOR_MAIN + "Player will acquire " + COLOR_CMD +
+                        Math.round(d.getOreExpMod()*100) + "%" + COLOR_MAIN + " of regular experience when mining ore and using furnaces");
+                if(ConfigHandler.getToggle("mobLootChance")) sender.sendMessage(COLOR_MAIN + "There is a " + COLOR_CMD +
+                        Math.round(d.getMobLootChance()*100) + "%" + COLOR_MAIN + " chance that mobs killed by the player " +
+                        "will drop twice as many items");
+                if(ConfigHandler.getToggle("oreLootChance")) sender.sendMessage(COLOR_MAIN + "There is a " + COLOR_CMD +
+                        Math.round(d.getOreLootChance()*100) + "%" + COLOR_MAIN + " chance that ore mined by the player " +
+                        "will drop twice as many items");
                 if(ConfigHandler.getToggle("venomTime")) sender.sendMessage(COLOR_MAIN + "Player will " +
                         (venomTime > 0 ? "" : COLOR_CMD + "not " + COLOR_MAIN) + "be poisoned by cave spiders" +
                         (venomTime > 0 ? " for " + COLOR_CMD + venomTime + COLOR_MAIN + " second" + (venomTime == 1 ? "" : "s") : ""));

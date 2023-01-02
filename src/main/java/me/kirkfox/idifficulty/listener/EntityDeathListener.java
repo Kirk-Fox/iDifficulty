@@ -24,11 +24,11 @@ public class EntityDeathListener implements Listener {
             Player player = entity.getKiller();
             if(player != null) {
                 PlayerDifficulty d = DifficultyHandler.getPlayerDifficulty(player);
-                if(ConfigHandler.getToggle("expMod")) {
-                    e.setDroppedExp((int) Math.round(e.getDroppedExp() * d.getExpMod()));
+                if(ConfigHandler.getToggle("mobExpMod")) {
+                    e.setDroppedExp((int) Math.round(e.getDroppedExp() * d.getMobExpMod()));
                 }
 
-                if(ConfigHandler.getToggle("lootChance") && IDifficulty.getRand().nextDouble() < d.getLootChance()) {
+                if(ConfigHandler.getToggle("mobLootChance") && IDifficulty.getRand().nextDouble() < d.getMobLootChance()) {
                     List<ItemStack> doubledLoot = new ArrayList<>(e.getDrops());
                     EntityEquipment equip = entity.getEquipment();
                     if (equip != null) {

@@ -10,8 +10,8 @@ public class FurnaceExtractListener implements Listener {
 
     @EventHandler
     public void onBlockExp(FurnaceExtractEvent e) {
-        if(ConfigHandler.getToggle("expMod")) {
-            e.setExpToDrop((int) Math.round(e.getExpToDrop() * DifficultyHandler.getPlayerDifficulty(e.getPlayer()).getExpMod()));
+        if(ConfigHandler.getToggle("oreExpMod")) {
+            e.setExpToDrop((int) Math.round(e.getExpToDrop() * DifficultyHandler.getPlayerDifficulty(e.getPlayer()).getOreExpMod()));
         }
     }
 

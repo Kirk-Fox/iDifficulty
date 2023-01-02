@@ -48,14 +48,14 @@ public class BlockBreakListener implements Listener {
         Player p = e.getPlayer();
         PlayerDifficulty d = DifficultyHandler.getPlayerDifficulty(p);
 
-        if(ConfigHandler.getToggle("expMod")) {
-            e.setExpToDrop((int) Math.round(e.getExpToDrop() * d.getExpMod()));
+        if(ConfigHandler.getToggle("oreExpMod")) {
+            e.setExpToDrop((int) Math.round(e.getExpToDrop() * d.getOreExpMod()));
         }
 
         Block b = e.getBlock();
         Material m = b.getType();
-        if(ConfigHandler.getToggle("lootChance") && doubledBlocks.contains(m) &&
-                IDifficulty.getRand().nextDouble() < d.getLootChance()) {
+        if(ConfigHandler.getToggle("oreLootChance") && doubledBlocks.contains(m) &&
+                IDifficulty.getRand().nextDouble() < d.getOreLootChance()) {
             ItemStack[] drops = b.getDrops(p.getInventory().getItemInMainHand(), p).toArray(new ItemStack[0]);
             boolean isDoubled = drops.length != 1 || drops[0].getType() != m;
             e.setDropItems(false);
