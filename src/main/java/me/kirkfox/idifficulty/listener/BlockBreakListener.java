@@ -23,7 +23,13 @@ public class BlockBreakListener implements Listener {
     public BlockBreakListener() {
         // All versions
         doubledBlocks.addAll(Arrays.asList(Material.COAL_ORE, Material.DIAMOND_ORE, Material.EMERALD_ORE, Material.GOLD_ORE,
-                Material.GRAVEL, Material.IRON_ORE, Material.LAPIS_ORE, Material.NETHER_QUARTZ_ORE, Material.REDSTONE_ORE));
+                Material.GRAVEL, Material.IRON_ORE, Material.LAPIS_ORE, Material.REDSTONE_ORE));
+        try {
+            // 1.13+
+            doubledBlocks.add(Material.NETHER_QUARTZ_ORE);
+        } catch (NoSuchFieldError e) {
+            doubledBlocks.add(Material.getMaterial("QUARTZ_ORE"));
+        }
         // 1.16+
         try {
             doubledBlocks.addAll(Arrays.asList(Material.GILDED_BLACKSTONE, Material.NETHER_GOLD_ORE));
