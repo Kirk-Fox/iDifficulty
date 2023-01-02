@@ -13,10 +13,6 @@ public class PlayerDifficulty extends Difficulty {
         this.UUID = uuid;
     }
 
-    public void setDifficulty(Difficulty d) {
-        super.setDifficulty(d);
-    }
-
     public UUID getUUID() {
         return UUID;
     }
