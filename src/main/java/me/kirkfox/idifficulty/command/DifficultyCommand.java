@@ -188,7 +188,7 @@ public class DifficultyCommand implements CommandExecutor {
                 if(!d.getNeedsPermission() || player.hasPermission(PERMISSION + "diff." + d.getName()) || skipPerm) {
                     pd.setDateChanged(date);
                     String dName = DifficultyHandler.setPlayerDifficulty(player, d).getNameFormatted();
-                    player.sendMessage(COLOR_MAIN + "Your difficulty has been changed to " + dName);
+                    player.sendMessage(COLOR_MAIN + "Your difficulty has been changed to " + COLOR_CMD + dName);
                     return dName;
                 }
                 player.sendMessage(COLOR_ERROR + "You don't have permission to use " + d.getNameFormatted() + " difficulty!");
@@ -213,7 +213,7 @@ public class DifficultyCommand implements CommandExecutor {
             if(p != null) {
                 if(!d.getNeedsPermission() || sender.hasPermission(PERMISSION + "diff." + d.getName())){
                     String dName = setDifficulty(p, d, true);
-                    sender.sendMessage(COLOR_MAIN + p.getName() + "'s difficulty has been changed to " + dName);
+                    sender.sendMessage(COLOR_MAIN + p.getName() + "'s difficulty has been changed to " + COLOR_CMD + dName);
                 }
             } else {
                 sender.sendMessage(COLOR_ERROR + "The player '" + pName + "' was not found!");
@@ -280,7 +280,7 @@ public class DifficultyCommand implements CommandExecutor {
 
     private void viewDifficulty(Player player) {
         if(player.hasPermission(PERMISSION + "view")) {
-            player.sendMessage(COLOR_MAIN + "Your current difficulty is " +
+            player.sendMessage(COLOR_MAIN + "Your current difficulty is " + COLOR_CMD +
                     DifficultyHandler.getPlayerDifficulty(player).getNameFormatted());
         } else {
             player.sendMessage(COLOR_ERROR + "You don't have permission to view your current difficulty!");
@@ -293,7 +293,7 @@ public class DifficultyCommand implements CommandExecutor {
             viewDifficulty(p);
         } else if(sender.hasPermission(PERMISSION + "view.others")) {
             if(p != null) {
-                sender.sendMessage(COLOR_MAIN + p.getName() + "'s current difficulty is " +
+                sender.sendMessage(COLOR_MAIN + p.getName() + "'s current difficulty is " + COLOR_CMD +
                         DifficultyHandler.getPlayerDifficulty(p).getNameFormatted());
             } else {
                 sender.sendMessage(COLOR_ERROR + "The player '" + pName + "' was not found!");
