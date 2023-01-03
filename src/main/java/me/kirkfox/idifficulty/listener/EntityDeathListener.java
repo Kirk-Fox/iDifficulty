@@ -18,27 +18,31 @@ import java.util.List;
 public class EntityDeathListener implements Listener {
 
     @EventHandler
-    public void onEntityDeath(EntityDeathEvent e) {
-        LivingEntity entity = e.getEntity();
+    public void onEntityDeath(EntityDeathEvent event) {
+        LivingEntity entity = event.getEntity();
         if(!(entity instanceof Player)) {
             Player player = entity.getKiller();
             if(player != null) {
                 PlayerDifficulty d = DifficultyHandler.getPlayerDifficulty(player);
                 if(ConfigHandler.getToggle("mobExpMod")) {
-                    e.setDroppedExp((int) Math.round(e.getDroppedExp() * d.getMobExpMod()));
+                    event.setDroppedExp((int) Math.round(event.getDroppedExp() * d.getMobExpMod()));
                 }
 
                 if(ConfigHandler.getToggle("mobLootChance") && IDifficulty.getRand().nextDouble() < d.getMobLootChance()) {
-                    List<ItemStack> doubledLoot = new ArrayList<>(e.getDrops());
+                    List<ItemStack> doubledLoot = new ArrayList<>(event.getDrops());
                     EntityEquipment equip = entity.getEquipment();
                     if (equip != null) {
                         for(ItemStack i : equip.getArmorContents()) {
                             doubledLoot.remove(i);
                         }
-                        doubledLoot.remove(equip.getItemInMainHand());
-                        doubledLoot.remove(equip.getItemInOffHand());
+                        try {
+                            doubledLoot.remove(equip.getItemInMainHand());
+                            doubledLoot.remove(equip.getItemInOffHand());
+                        } catch (NoSuchMethodError e) {
+                            doubledLoot.remove(equip.getItemInHand());
+                        }
                     }
-                    e.getDrops().addAll(doubledLoot);
+                    event.getDrops().addAll(doubledLoot);
                 }
             }
         }

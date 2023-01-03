@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -15,20 +16,27 @@ import java.util.List;
 public class PlayerDeathListener implements Listener {
 
     @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent e) {
-        Player p = e.getEntity();
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        Player p = event.getEntity();
         Difficulty d = DifficultyHandler.getPlayerDifficulty(p);
         boolean keepInv = d.getKeepInv();
         boolean keepExp = d.getKeepExp();
 
         if(ConfigHandler.getToggle("keepInv")) {
-            e.setKeepInventory(keepInv);
-            List<ItemStack> drops = e.getDrops();
+            event.setKeepInventory(keepInv);
+            List<ItemStack> drops = event.getDrops();
             drops.clear();
             if(!keepInv) {
                 ItemStack[] inv = p.getInventory().getContents();
+                Enchantment vanish = null;
+                boolean vanishingCurse = true;
+                try {
+                    vanish = Enchantment.VANISHING_CURSE;
+                } catch (NoSuchFieldError e) {
+                    vanishingCurse = false;
+                }
                 for(ItemStack i : inv) {
-                    if(i != null && !i.containsEnchantment(Enchantment.VANISHING_CURSE)) {
+                    if(i != null && !(vanishingCurse && i.containsEnchantment(vanish))) {
                         drops.add(i);
                     }
                 }
@@ -36,12 +44,21 @@ public class PlayerDeathListener implements Listener {
         }
 
         if(ConfigHandler.getToggle("keepExp")) {
-            e.setKeepLevel(keepExp);
-            e.setDroppedExp(keepExp ? 0 : Math.min(7*p.getLevel(), 100));
+            event.setKeepLevel(keepExp);
+            event.setDroppedExp(keepExp ? 0 : Math.min(7*p.getLevel(), 100));
         }
 
         if(EntityDamageListener.isDyingFromStarvation(p)) {
-            e.setDeathMessage(p.getName() + " starved to death");
+            event.setDeathMessage(p.getName() + " starved to death");
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDeath(PlayerRespawnEvent event) {
+        Player p = event.getPlayer();
+        if(!DifficultyHandler.getPlayerDifficulty(p).getKeepExp()) {
+            p.setLevel(0);
+            p.setExp(0);
         }
     }
 

@@ -44,21 +44,37 @@ public class BlockBreakListener implements Listener {
     }
 
     @EventHandler
-    public void onBlockBreak(BlockBreakEvent e) {
-        Player p = e.getPlayer();
+    public void onBlockBreak(BlockBreakEvent event) {
+        Player p = event.getPlayer();
         PlayerDifficulty d = DifficultyHandler.getPlayerDifficulty(p);
 
         if(ConfigHandler.getToggle("oreExpMod")) {
-            e.setExpToDrop((int) Math.round(e.getExpToDrop() * d.getOreExpMod()));
+            event.setExpToDrop((int) Math.round(event.getExpToDrop() * d.getOreExpMod()));
         }
 
-        Block b = e.getBlock();
+        Block b = event.getBlock();
         Material m = b.getType();
         if(ConfigHandler.getToggle("oreLootChance") && doubledBlocks.contains(m) &&
                 IDifficulty.getRand().nextDouble() < d.getOreLootChance()) {
-            ItemStack[] drops = b.getDrops(p.getInventory().getItemInMainHand(), p).toArray(new ItemStack[0]);
+            try {
+                event.setDropItems(false);
+            } catch (NoSuchMethodError e) {
+                ConfigHandler.disableOreDoubling();
+                return;
+            }
+            ItemStack tool;
+            try {
+                tool = p.getInventory().getItemInMainHand();
+            } catch (NoSuchMethodError e) {
+                tool = p.getInventory().getItemInHand();
+            }
+            ItemStack[] drops;
+            try {
+                drops = b.getDrops(tool, p).toArray(new ItemStack[0]);
+            } catch (NoSuchMethodError e) {
+                drops = b.getDrops(tool).toArray(new ItemStack[0]);
+            }
             boolean isDoubled = drops.length != 1 || drops[0].getType() != m;
-            e.setDropItems(false);
             for (ItemStack i : drops) {
                 b.getWorld().dropItemNaturally(b.getLocation(), i);
                 if(isDoubled) b.getWorld().dropItemNaturally(b.getLocation(), i);

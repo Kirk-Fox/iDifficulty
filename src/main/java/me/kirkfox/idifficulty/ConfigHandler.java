@@ -113,6 +113,13 @@ public class ConfigHandler {
         return TOGGLE_MAP.get(value);
     }
 
+    public static void disableOreDoubling() {
+        config.set("toggle.ore-doubled-loot-chance", false);
+        plugin.saveConfig();
+        reloadConfig();
+        IDifficulty.outputLog("Ore doubling is not available on versions prior to 1.12!");
+    }
+
     public static List<Difficulty> getDifficulties() {
         List<Difficulty> dList = new ArrayList<>();
 

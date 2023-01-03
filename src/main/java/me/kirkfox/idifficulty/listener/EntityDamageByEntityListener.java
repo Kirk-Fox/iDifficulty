@@ -15,14 +15,14 @@ import org.bukkit.projectiles.ProjectileSource;
 public class EntityDamageByEntityListener implements Listener {
 
     @EventHandler
-    public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-        Entity d = e.getDamager();
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        Entity d = event.getDamager();
         EntityType dType = d.getType();
-        if(e.getEntity() instanceof Player && !(dType == EntityType.PLAYER || isTamedWolf(d) ||
+        if(event.getEntity() instanceof Player && !(dType == EntityType.PLAYER || isTamedWolf(d) ||
                 isPlayerProjectile(d) || isPlayerAreaEffectCloud(d) || dType == EntityType.PRIMED_TNT)) {
-            Player p = (Player) e.getEntity();
+            Player p = (Player) event.getEntity();
             PlayerDifficulty pd = DifficultyHandler.getPlayerDifficulty(p);
-            double damage = ConfigHandler.getToggle("damageMod") ? e.getDamage() * pd.getDamageMod() : e.getDamage();
+            double damage = ConfigHandler.getToggle("damageMod") ? event.getDamage() * pd.getDamageMod() : event.getDamage();
             boolean isCaveSpider = dType == EntityType.CAVE_SPIDER;
             boolean isBee;
             try {
@@ -30,9 +30,9 @@ public class EntityDamageByEntityListener implements Listener {
             } catch (NoSuchFieldError error) {
                 isBee = false;
             }
-            e.setDamage(damage);
-            if(ConfigHandler.getToggle("venomTime") && (isCaveSpider || isBee) && p.getHealth() > e.getFinalDamage()) {
-                p.damage(e.getFinalDamage());
+            event.setDamage(damage);
+            if(ConfigHandler.getToggle("venomTime") && (isCaveSpider || isBee) && p.getHealth() > event.getFinalDamage()) {
+                p.damage(event.getFinalDamage());
                 int venomTime = pd.getVenomTime();
                 if(venomTime > 0) {
                     p.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 20*(pd.getVenomTime() + (isBee ? 3 : 0)), 0));
@@ -40,21 +40,25 @@ public class EntityDamageByEntityListener implements Listener {
                 if(isBee) {
                     ((Bee) d).setHasStung(true);
                 }
-                e.setCancelled(true);
+                event.setCancelled(true);
             }
         }
     }
 
-    private boolean isTamedWolf(Entity e) {
-        return e instanceof Wolf && ((Wolf) e).isTamed();
+    private boolean isTamedWolf(Entity entity) {
+        return entity instanceof Wolf && ((Wolf) entity).isTamed();
     }
 
-    private boolean isPlayerProjectile(Entity e) {
-        return e instanceof Projectile && isPlayerProjectileSource(((Projectile) e).getShooter());
+    private boolean isPlayerProjectile(Entity entity) {
+        return entity instanceof Projectile && isPlayerProjectileSource(((Projectile) entity).getShooter());
     }
 
-    private boolean isPlayerAreaEffectCloud(Entity e) {
-        return e instanceof AreaEffectCloud && isPlayerProjectileSource(((AreaEffectCloud) e).getSource());
+    private boolean isPlayerAreaEffectCloud(Entity entity) {
+        try {
+            return entity.getType() == EntityType.AREA_EFFECT_CLOUD && isPlayerProjectileSource(((AreaEffectCloud) entity).getSource());
+        } catch (NoSuchFieldError e) {
+            return false;
+        }
     }
 
     private boolean isPlayerProjectileSource(ProjectileSource p) {

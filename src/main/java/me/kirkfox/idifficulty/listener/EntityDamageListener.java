@@ -41,7 +41,7 @@ public class EntityDamageListener implements Listener {
                         public void run() {
                             starve(p, e.getDamage());
                         }
-                    }.runTaskLater(IDifficulty.getPlugin(), p.getStarvationRate());
+                    }.runTaskLater(IDifficulty.getPlugin(), getStarvationRate(p));
                 } else {
                     if(shouldNotStarve(p, e.getDamage())) e.setCancelled(true);
                     STARVING_SET.remove(p);
@@ -74,7 +74,7 @@ public class EntityDamageListener implements Listener {
                     starve(p, damage);
                 }
             }
-        }.runTaskLater(IDifficulty.getPlugin(), p.getStarvationRate());
+        }.runTaskLater(IDifficulty.getPlugin(), getStarvationRate(p));
     }
 
     public static void starveLater(Player p) {
@@ -103,6 +103,16 @@ public class EntityDamageListener implements Listener {
             return true;
         }
         return false;
+    }
+
+    private static int getStarvationRate(Player p) {
+        int ticks;
+        try {
+            ticks = p.getStarvationRate();
+        } catch (NoSuchMethodError e) {
+            ticks = 80;
+        }
+        return ticks;
     }
 
 }
