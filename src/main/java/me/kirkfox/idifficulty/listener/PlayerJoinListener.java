@@ -11,14 +11,19 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class PlayerJoinListener implements Listener {
 
+    /**
+     * When a player joins, this method updates their difficulty and informs them of any new plugin updates if they have
+     * the relevant permission.
+     *
+     * @param event the player join event
+     */
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerJoin(PlayerJoinEvent e) {
-        Player p = e.getPlayer();
-        DifficultyHandler.updatePlayerDifficulty(p);
-        EntityDamageListener.starveLater(p);
-        String u = IDifficulty.getUpdateString();
-        if(u != null && p.hasPermission("idifficulty.updatecheck")) {
-            p.sendMessage(ChatColor.DARK_AQUA + u);
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        DifficultyHandler.updatePlayerDifficulty(player);
+        String updateString = IDifficulty.getUpdateString();
+        if (updateString != null && player.hasPermission("idifficulty.updatecheck")) {
+            player.sendMessage(ChatColor.DARK_AQUA + updateString);
         }
     }
 

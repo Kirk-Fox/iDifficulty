@@ -13,16 +13,10 @@ public class PlayerDifficulty extends Difficulty {
         this.UUID = uuid;
     }
 
-    public UUID getUUID() {
-        return UUID;
-    }
+    public UUID getUUID() { return UUID; }
 
-    public Date getDateChanged() {
-        return dateChanged;
-    }
+    public Date getDateChanged() { return dateChanged; }
 
-    public void setDateChanged(Date date) {
-        dateChanged = date;
-    }
+    public void setDateChanged(Date date) { dateChanged = date; }
 
 }

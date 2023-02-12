@@ -28,8 +28,8 @@ public class DifficultyHandler {
 
     @Nullable
     public static Difficulty getDifficulty(String name) {
-        for(Difficulty d : difficultyList) {
-            if(d.getName().equalsIgnoreCase(name)) {
+        for (Difficulty d : difficultyList) {
+            if (d.getName().equalsIgnoreCase(name)) {
                 return d;
             }
         }
@@ -44,9 +44,9 @@ public class DifficultyHandler {
 
     @NotNull
     public static PlayerDifficulty setPlayerDifficulty(Player p, Difficulty d) {
-        DifficultyChangeEvent e = new DifficultyChangeEvent(p, getPlayerDifficulty(p), d);
-        Bukkit.getPluginManager().callEvent(e);
-        Difficulty newD = e.getNewDifficulty();
+        DifficultyChangeEvent event = new DifficultyChangeEvent(p, getPlayerDifficulty(p), d);
+        Bukkit.getPluginManager().callEvent(event);
+        Difficulty newD = event.isCancelled() ? event.getOldDifficulty() : event.getNewDifficulty();
         PlayerDifficulty pd = DifficultyStorage.updateDifficulty(p.getUniqueId(), newD);
         return (pd != null) ? pd : DifficultyStorage.createDifficulty(p.getUniqueId(), newD);
     }
@@ -54,7 +54,7 @@ public class DifficultyHandler {
     public static void updatePlayerDifficulty(Player p) {
         UUID uuid = p.getUniqueId();
         PlayerDifficulty pd = DifficultyStorage.readDifficulty(uuid);
-        if(pd == null) {
+        if (pd == null) {
             DifficultyStorage.createDifficulty(uuid, defaultDifficulty);
         } else {
             Difficulty d = getDifficulty(pd.getName());
@@ -64,7 +64,7 @@ public class DifficultyHandler {
     }
 
     public static void updateAllPlayerDifficulties() {
-        for(Player p : IDifficulty.getPlugin().getServer().getOnlinePlayers()) {
+        for (Player p : IDifficulty.getPlugin().getServer().getOnlinePlayers()) {
             updatePlayerDifficulty(p);
         }
     }

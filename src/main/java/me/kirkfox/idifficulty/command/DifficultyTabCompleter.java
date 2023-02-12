@@ -20,20 +20,20 @@ public class DifficultyTabCompleter implements TabCompleter {
         for (String c : commands) {
             if (sender.hasPermission("idifficulty." + c) || c.equals("help")) commandList.add(c);
         }
-        if(args.length == 1) {
+        if (args.length == 1) {
             return commandList;
         }
         List<String> difficultyList = new ArrayList<>();
         for (Difficulty d : DifficultyHandler.getDifficultyList()) {
-            if(!d.getNeedsPermission() || sender.hasPermission("idifficulty.diff." + d.getName())) {
+            if (!d.getNeedsPermission() || sender.hasPermission("idifficulty.diff." + d.getName())) {
                 difficultyList.add(d.getName());
             }
         }
-        if(args.length == 2) {
-            if("set".equals(args[0]) || "info".equals(args[0])) {
+        if (args.length == 2) {
+            if ("set".equals(args[0]) || "info".equals(args[0])) {
                 return difficultyList;
             }
-            if("help".equals(args[0])) {
+            if ("help".equals(args[0])) {
                 commandList.remove("help");
                 return commandList;
             }

@@ -32,7 +32,7 @@ public class MetricsHandler extends Metrics {
         Map<String, Integer> dMap = new HashMap<>();
         for (Difficulty d : DifficultyStorage.getPlayerDifficulties()) {
             String name = d.getName();
-            if(includeDefault || !name.equalsIgnoreCase(DifficultyHandler.getDefaultDifficulty().getName()))
+            if (includeDefault || !name.equalsIgnoreCase(DifficultyHandler.getDefaultDifficulty().getName()))
                 dMap.put(name, dMap.getOrDefault(name, 0) + 1);
         }
         return dMap;

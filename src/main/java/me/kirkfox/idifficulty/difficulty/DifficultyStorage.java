@@ -37,8 +37,8 @@ public class DifficultyStorage {
     @Nullable
     public static PlayerDifficulty readDifficulty(UUID uuid) {
 
-        for(PlayerDifficulty d : playerDifficulties) {
-            if(d.getUUID().equals(uuid)) {
+        for (PlayerDifficulty d : playerDifficulties) {
+            if (d.getUUID().equals(uuid)) {
                 return d;
             }
         }
@@ -48,8 +48,8 @@ public class DifficultyStorage {
     @Nullable
     public static PlayerDifficulty updateDifficulty(UUID uuid, Difficulty newD) {
 
-        for(PlayerDifficulty d : playerDifficulties) {
-            if(d.getUUID().equals(uuid)) {
+        for (PlayerDifficulty d : playerDifficulties) {
+            if (d.getUUID().equals(uuid)) {
 
                 d.setDifficulty(newD);
 
@@ -69,7 +69,7 @@ public class DifficultyStorage {
     public static void saveDifficulties() throws IOException {
         Gson gson = new Gson();
         File file = new File(IDifficulty.getPlugin().getDataFolder().getAbsolutePath() + "/playerdata.json");
-        if(!file.getParentFile().exists()) {
+        if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
         file.createNewFile();
@@ -83,7 +83,7 @@ public class DifficultyStorage {
     public static void loadDifficulties() throws IOException {
         Gson gson = new Gson();
         File file = new File(IDifficulty.getPlugin().getDataFolder().getAbsolutePath() + "/playerdata.json");
-        if(file.exists()) {
+        if (file.exists()) {
             FileReader reader = new FileReader(file);
             PlayerDifficulty[] d = gson.fromJson(reader, PlayerDifficulty[].class);
             playerDifficulties = new ArrayList<>(Arrays.asList(d));

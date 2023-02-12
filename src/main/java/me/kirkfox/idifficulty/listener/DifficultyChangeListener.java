@@ -7,9 +7,14 @@ import org.bukkit.event.Listener;
 
 public class DifficultyChangeListener implements Listener {
 
+    /**
+     * Method called when a players difficulty changes to see if the player should be starving.
+     *
+     * @param event the difficulty change event
+     */
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onDifficultyChange(DifficultyChangeEvent e) {
-        EntityDamageListener.starveLater(e.getPlayer());
+    public void onDifficultyChange(DifficultyChangeEvent event) {
+        EntityDamageListener.starveLater(event.getPlayer());
     }
 
 }

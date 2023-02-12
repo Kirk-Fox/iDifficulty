@@ -69,20 +69,19 @@ public final class IDifficulty extends JavaPlugin {
     }
 
     private void registerListeners() {
-        Listener[] listeners = {new BlockBreakListener(), new DifficultyChangeListener(), new EntityDamageByEntityListener(),
-                new EntityDamageListener(), new EntityDeathListener(), new EntityRegainHealthListener(),
-                new FoodLevelChangeListener(), new FurnaceExtractListener(), new PlayerDeathListener(),
-                new PlayerJoinListener()};
-        for(Listener l : listeners) {
+        Listener[] listeners = {new BlockExpDropListener(), new DifficultyChangeListener(), new EntityDamageByEntityListener(),
+                new EntityDamageListener(), new EntityDeathListener(), new PlayerDeathListener(), new PlayerJoinListener(),
+                new PlayerStarveUpdateListener()};
+        for (Listener l : listeners) {
             getServer().getPluginManager().registerEvents(l, this);
         }
     }
 
     private void checkForUpdates() {
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-            try(InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + RESOURCE_ID).openStream();
+            try (InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + RESOURCE_ID).openStream();
                 Scanner scanner = new Scanner(inputStream)) {
-                if(scanner.hasNext()) {
+                if (scanner.hasNext()) {
                     String version = scanner.next();
                     if (!this.getDescription().getVersion().equalsIgnoreCase(version)) {
                         updateString = "A new version of iDifficulty is available. " +
