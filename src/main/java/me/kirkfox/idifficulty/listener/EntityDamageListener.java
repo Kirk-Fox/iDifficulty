@@ -44,6 +44,7 @@ public class EntityDamageListener implements Listener {
 
         Player p = (Player) event.getEntity();
         // If the player was not already starving exit while checking for starvation.
+        // This way there will not be multiple recurrences of starvation.
         if (event.getCause() != EntityDamageEvent.DamageCause.STARVATION) {
             starveLater(p);
             return;
@@ -99,6 +100,7 @@ public class EntityDamageListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
+                // If player is already starving, do not initiate a new starvation recurrence.
                 if (!STARVING_SET.contains(player)) {
                     starve(player, damage);
                 }
