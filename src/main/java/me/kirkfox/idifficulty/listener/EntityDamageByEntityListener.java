@@ -1,8 +1,8 @@
 package me.kirkfox.idifficulty.listener;
 
 import me.kirkfox.idifficulty.ConfigHandler;
+import me.kirkfox.idifficulty.difficulty.Difficulty;
 import me.kirkfox.idifficulty.difficulty.DifficultyHandler;
-import me.kirkfox.idifficulty.difficulty.PlayerDifficulty;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -22,44 +22,39 @@ public class EntityDamageByEntityListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        Entity d = event.getDamager();
-        EntityType dType = d.getType();
+        Entity damager = event.getDamager();
+        EntityType dType = damager.getType();
 
         // If the damaged entity is not a player or the attacker is a player, don't modify attack.
-        if (!(event.getEntity() instanceof Player) || dType == EntityType.PLAYER || isTamedWolf(d) || isPlayerProjectile(d) ||
-                isPlayerAreaEffectCloud(d) || dType == EntityType.PRIMED_TNT) return;
+        if (!(event.getEntity() instanceof Player) || dType == EntityType.PLAYER || isTamedWolf(damager) ||
+                isPlayerProjectile(damager) || isPlayerAreaEffectCloud(damager) || dType == EntityType.PRIMED_TNT) return;
 
-        Player p = (Player) event.getEntity();
-        PlayerDifficulty pd = DifficultyHandler.getPlayerDifficulty(p);
+        Player player = (Player) event.getEntity();
+        Difficulty difficulty = DifficultyHandler.getPlayerDifficulty(player);
         // Check if damage modifiers are enabled and adjust damage accordingly.
-        event.setDamage(ConfigHandler.getToggle("damageMod") ? event.getDamage() * pd.getDamageMod() : event.getDamage());
+        event.setDamage(ConfigHandler.getToggle("damageMod") ? event.getDamage() * difficulty.getDamageMod() : event.getDamage());
 
         boolean isCaveSpider = dType == EntityType.CAVE_SPIDER;
-        boolean isBee;
-        try {
-            isBee = dType == EntityType.BEE;
-        } catch (NoSuchFieldError error) {
-            isBee = false;
-        }
+        boolean isBee = (dType.name().equals("BEE"));
 
         // Check if venom time is disabled, if the attacker is not venomous, or if the player will die from the attack
         // and exit if any of these are true.
         // If the player dies from the attack, adding the potion effect would cause it to affect them after respawn.
         if (!ConfigHandler.getToggle("venomTime") || !(isCaveSpider || isBee) ||
-                p.getHealth() <= event.getFinalDamage()) return;
+                player.getHealth() <= event.getFinalDamage()) return;
 
         // Cancel event to prevent original poison effect and apply the damage to the player directly.
         event.setCancelled(true);
-        p.damage(event.getFinalDamage());
+        player.damage(event.getFinalDamage());
 
         // Calculate and apply poison effect.
-        if (pd.getVenomTime() > 0) {
-            p.addPotionEffect(new PotionEffect(PotionEffectType.POISON,
-                    20*(pd.getVenomTime() + (isBee ? 3 : 0)), 0));
+        if (difficulty.getVenomTime() > 0) {
+            player.addPotionEffect(new PotionEffect(PotionEffectType.POISON,
+                    20*(difficulty.getVenomTime() + (isBee ? 3 : 0)), 0));
         }
 
         // If attacker is a bee, remove its stinger.
-        if (isBee) ((Bee) d).setHasStung(true);
+        if (isBee) ((Bee) damager).setHasStung(true);
 
     }
 

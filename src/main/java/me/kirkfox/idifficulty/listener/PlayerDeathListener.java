@@ -1,8 +1,10 @@
 package me.kirkfox.idifficulty.listener;
 
 import me.kirkfox.idifficulty.ConfigHandler;
+import me.kirkfox.idifficulty.IDifficulty;
 import me.kirkfox.idifficulty.difficulty.Difficulty;
 import me.kirkfox.idifficulty.difficulty.DifficultyHandler;
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -36,19 +38,18 @@ public class PlayerDeathListener implements Listener {
             drops.clear();
             if (!keepInv) {
                 ItemStack[] inv = p.getInventory().getContents();
-                
+
                 // Check if VANISHING_CURSE exists.
                 Enchantment vanish = null;
-                boolean vanishingCurse = true;
-                try {
+                boolean vanishingCurseExists = false;
+                if (Integer.parseInt(IDifficulty.getPlugin().getServer().getVersion().split("\\.")[1]) >= 11) {
                     vanish = Enchantment.VANISHING_CURSE;
-                } catch (NoSuchFieldError e) {
-                    vanishingCurse = false;
+                    vanishingCurseExists = true;
                 }
                 
                 // Drop all items without the curse of vanishing.
                 for (ItemStack i : inv)
-                    if (i != null && !(vanishingCurse && i.containsEnchantment(vanish))) drops.add(i);
+                    if (i != null && !(vanishingCurseExists && i.containsEnchantment(vanish))) drops.add(i);
             }
         }
 

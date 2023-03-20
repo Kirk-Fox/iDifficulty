@@ -2,10 +2,12 @@ package me.kirkfox.idifficulty;
 
 import me.kirkfox.idifficulty.difficulty.Difficulty;
 import me.kirkfox.idifficulty.difficulty.DifficultyHandler;
+import me.kirkfox.idifficulty.difficulty.PlayerDataStorage;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
 import java.util.*;
 
 public class ConfigHandler {
@@ -37,7 +39,11 @@ public class ConfigHandler {
         enableConfig();
         DifficultyHandler.registerDifficulties();
         // Ensure that players do not retain out-of-date difficulty settings.
-        DifficultyHandler.updateAllPlayerDifficulties();
+        try {
+            PlayerDataStorage.loadDifficulties();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -179,14 +185,14 @@ public class ConfigHandler {
     /**
      * Gets the length of the delay before a player can change their difficulty.
      *
-     * @return the time delay
+     * @return the time delay in minutes
      */
     public static long getTimeDelay() {
         return config.getLong("time-delay");
     }
 
     /**
-     * Gets an unmodifiable map of the toggleable settings and their values
+     * Gets an unmodifiable map of the toggleable settings and their values.
      *
      * @return a map of the toggle values
      */
@@ -195,7 +201,7 @@ public class ConfigHandler {
     }
 
     /**
-     * Gets the value of a specific toggleable setting
+     * Gets the value of a specific toggleable setting.
      *
      * @param value the identifier for the toggleable setting
      * @return the value of the setting
@@ -205,7 +211,7 @@ public class ConfigHandler {
     }
 
     /**
-     * Creates a list of all difficulties detailed in the configuration
+     * Creates a list of all difficulties detailed in the configuration.
      *
      * @return a list of difficulties
      */
@@ -219,7 +225,7 @@ public class ConfigHandler {
     }
 
     /**
-     * Gets the value of a setting for a specific difficulty
+     * Gets the value of a setting for a specific difficulty.
      *
      * @param dName name of the difficulty
      * @param value name of the setting
@@ -231,24 +237,12 @@ public class ConfigHandler {
     }
 
     /**
-     * Gets the name of the default difficulty
+     * Gets the name of the default difficulty.
      *
      * @return the default difficulty's name
      */
     public static String getDefaultDifficultyName() {
         return config.getString("default");
-    }
-
-    /**
-     * Disables ore doubling. This method is only called when ore doubling is unsupported in the current version.
-     */
-    public static void disableOreDoubling() {
-        // Turn off toggle then save and reload configuration.
-        config.set("toggle.ore-doubled-loot-chance", false);
-        plugin.saveConfig();
-        reloadConfig();
-        // Inform console of disabled ore doubling.
-        IDifficulty.outputLog(ChatColor.RED + "Ore doubling is not available on versions prior to 1.12!");
     }
 
 }

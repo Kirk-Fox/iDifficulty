@@ -3,7 +3,7 @@ package me.kirkfox.idifficulty;
 import me.kirkfox.idifficulty.command.DifficultyCommand;
 import me.kirkfox.idifficulty.command.DifficultyTabCompleter;
 import me.kirkfox.idifficulty.difficulty.DifficultyHandler;
-import me.kirkfox.idifficulty.difficulty.DifficultyStorage;
+import me.kirkfox.idifficulty.difficulty.PlayerDataStorage;
 import me.kirkfox.idifficulty.listener.*;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
@@ -40,7 +40,7 @@ public final class IDifficulty extends JavaPlugin {
         registerListeners();
 
         try {
-            DifficultyStorage.loadDifficulties();
+            PlayerDataStorage.loadDifficulties();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -55,7 +55,7 @@ public final class IDifficulty extends JavaPlugin {
     @Override
     public void onDisable() {
         try {
-            DifficultyStorage.saveDifficulties();
+            PlayerDataStorage.saveDifficulties();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -69,9 +69,9 @@ public final class IDifficulty extends JavaPlugin {
     }
 
     private void registerListeners() {
-        Listener[] listeners = {new BlockExpDropListener(), new DifficultyChangeListener(), new EntityDamageByEntityListener(),
-                new EntityDamageListener(), new EntityDeathListener(), new PlayerDeathListener(), new PlayerJoinListener(),
-                new PlayerStarveUpdateListener()};
+        Listener[] listeners = {new BlockExpDropListener(), new DifficultyChangeListener(),
+                new EntityDamageByEntityListener(), new EntityDamageListener(), new EntityDeathListener(),
+                new PlayerDeathListener(), new PlayerJoinListener(), new PlayerStarveUpdateListener()};
         for (Listener l : listeners) {
             getServer().getPluginManager().registerEvents(l, this);
         }
@@ -102,6 +102,10 @@ public final class IDifficulty extends JavaPlugin {
 
     public static void outputLog(String msg) {
         plugin.getLogger().info(msg);
+    }
+
+    public static void outputWarning(String msg) {
+        plugin.getLogger().warning(msg);
     }
 
     public static IDifficulty getPlugin() {

@@ -2,8 +2,8 @@ package me.kirkfox.idifficulty.listener;
 
 import me.kirkfox.idifficulty.ConfigHandler;
 import me.kirkfox.idifficulty.IDifficulty;
+import me.kirkfox.idifficulty.difficulty.Difficulty;
 import me.kirkfox.idifficulty.difficulty.DifficultyHandler;
-import me.kirkfox.idifficulty.difficulty.PlayerDifficulty;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -31,7 +31,7 @@ public class EntityDeathListener implements Listener {
         // End method if entity is another player or if the entity was not killed by a player.
         if (entity instanceof Player || player == null) return;
 
-        PlayerDifficulty diff = DifficultyHandler.getPlayerDifficulty(player);
+        Difficulty diff = DifficultyHandler.getPlayerDifficulty(player);
         // Check if the mob experience modifier is enabled and calculate the experience.
         if (ConfigHandler.getToggle("mobExpMod"))
             event.setDroppedExp((int) Math.round(event.getDroppedExp() * diff.getMobExpMod()));
@@ -59,6 +59,7 @@ public class EntityDeathListener implements Listener {
                 doubledLoot.remove(equip.getItemInMainHand());
                 doubledLoot.remove(equip.getItemInOffHand());
             } catch (NoSuchMethodError e) {
+                //noinspection deprecation
                 doubledLoot.remove(equip.getItemInHand());
             }
             // Add doubled drops to event drops.

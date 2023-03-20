@@ -4,17 +4,17 @@ import me.kirkfox.idifficulty.ConfigHandler;
 
 public class Difficulty {
 
-    private String name;
-    private boolean keepInv;
-    private boolean keepExp;
-    private double mobExpMod;
-    private double oreExpMod;
-    private double damageMod;
-    private double mobLootChance;
-    private double oreLootChance;
-    private int venomTime;
-    private int minStarveHealth;
-    private boolean needsPermission;
+    private final String name;
+    private final boolean keepInv;
+    private final boolean keepExp;
+    private final double mobExpMod;
+    private final double oreExpMod;
+    private final double damageMod;
+    private final double mobLootChance;
+    private final double oreLootChance;
+    private final int venomTime;
+    private final int minStarveHealth;
+    private final boolean needsPermission;
 
     public Difficulty(String name) {
         this.name = name;
@@ -30,25 +30,7 @@ public class Difficulty {
         this.needsPermission = (boolean) getValue("requires-permission");
     }
 
-    public Difficulty(Difficulty d) {
-        setDifficulty(d);
-    }
-
     private Object getValue(String key) { return ConfigHandler.getDifficultyValue(this.name, key); }
-
-    protected void setDifficulty(Difficulty d) {
-        name = d.getName();
-        keepInv = d.getKeepInv();
-        keepExp = d.getKeepExp();
-        mobExpMod = d.getMobExpMod();
-        oreExpMod = d.getOreExpMod();
-        damageMod = d.getDamageMod();
-        mobLootChance = d.getMobLootChance();
-        oreLootChance = d.getOreLootChance();
-        venomTime = d.getVenomTime();
-        minStarveHealth = d.getMinStarveHealth();
-        needsPermission = d.getNeedsPermission();
-    }
 
     public String getName() { return name; }
 
@@ -68,12 +50,12 @@ public class Difficulty {
 
     public double getMobLootChance() { return mobLootChance; }
 
-    public double getOreLootChance() {return oreLootChance; }
+    public double getOreLootChance() { return oreLootChance; }
 
     public int getVenomTime() { return venomTime; }
 
     public int getMinStarveHealth() { return minStarveHealth; }
 
-    public boolean getNeedsPermission() { return needsPermission; }
+    public boolean getDoesNotNeedPermission() { return !needsPermission; }
 
 }

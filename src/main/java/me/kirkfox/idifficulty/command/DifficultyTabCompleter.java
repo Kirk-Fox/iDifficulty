@@ -12,6 +12,15 @@ import java.util.List;
 
 public class DifficultyTabCompleter implements TabCompleter {
 
+    /**
+     * Requests a list of possible completions for a command argument.
+     *
+     * @param sender the command sender
+     * @param command the command
+     * @param alias the alias used
+     * @param args the current command arguments
+     * @return a list of available following arguments or null if there are none
+     */
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command,
                                       @NotNull String alias, @NotNull String[] args) {
@@ -25,7 +34,7 @@ public class DifficultyTabCompleter implements TabCompleter {
         }
         List<String> difficultyList = new ArrayList<>();
         for (Difficulty d : DifficultyHandler.getDifficultyList()) {
-            if (!d.getNeedsPermission() || sender.hasPermission("idifficulty.diff." + d.getName())) {
+            if (d.getDoesNotNeedPermission() || sender.hasPermission("idifficulty.diff." + d.getName())) {
                 difficultyList.add(d.getName());
             }
         }

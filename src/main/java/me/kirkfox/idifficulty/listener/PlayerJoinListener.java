@@ -1,7 +1,6 @@
 package me.kirkfox.idifficulty.listener;
 
 import me.kirkfox.idifficulty.IDifficulty;
-import me.kirkfox.idifficulty.difficulty.DifficultyHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,7 +19,6 @@ public class PlayerJoinListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        DifficultyHandler.updatePlayerDifficulty(player);
         String updateString = IDifficulty.getUpdateString();
         if (updateString != null && player.hasPermission("idifficulty.updatecheck")) {
             player.sendMessage(ChatColor.DARK_AQUA + updateString);

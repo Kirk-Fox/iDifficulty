@@ -4,7 +4,7 @@ import me.kirkfox.idifficulty.ConfigHandler;
 import me.kirkfox.idifficulty.IDifficulty;
 import me.kirkfox.idifficulty.difficulty.Difficulty;
 import me.kirkfox.idifficulty.difficulty.DifficultyHandler;
-import me.kirkfox.idifficulty.difficulty.PlayerDifficulty;
+import me.kirkfox.idifficulty.difficulty.PlayerDataStorage;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -24,6 +24,15 @@ public class DifficultyCommand implements CommandExecutor {
     private static final ChatColor COLOR_CMD = ChatColor.GOLD;
     private static final ChatColor COLOR_ERROR = ChatColor.RED;
 
+    /**
+     * Called when a user uses the /idifficulty command
+     *
+     * @param sender the command sender
+     * @param cmd the command that was used
+     * @param label the alias of the command that was used
+     * @param args the passed command arguments
+     * @return true (invalid command use is handled by plugin)
+     */
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         boolean isPlayer = sender instanceof Player;
@@ -38,6 +47,7 @@ public class DifficultyCommand implements CommandExecutor {
                     COLOR_MAIN + "Type " + COLOR_CMD + "/idiff help" + COLOR_MAIN + " for a list of commands available to you.");
             return true;
         }
+
         switch (args[0]) {
             case "help":
                 if (args.length == 1) {
@@ -102,6 +112,13 @@ public class DifficultyCommand implements CommandExecutor {
         return true;
     }
 
+    /**
+     * Handles the /idiff help command when it is called. Checks what permissions the user has and displays
+     * info about the commands available to them.
+     *
+     * @param sender the command sender
+     * @param isPlayer whether the sender is a player
+     */
     private void helpDifficulty(CommandSender sender, boolean isPlayer) {
         boolean hasPerm = false;
         if (sender.hasPermission(PERMISSION + "set") && isPlayer) {
@@ -142,6 +159,12 @@ public class DifficultyCommand implements CommandExecutor {
         }
     }
 
+    /**
+     * Handles the /idiff help command when a command is specified.
+     *
+     * @param sender the command sender
+     * @param command the subcommand in question
+     */
     private void helpDifficultySpecific(CommandSender sender, @NotNull String command) {
         String commandUsage = COLOR_MAIN + "Usage: " + COLOR_CMD + "/idiff " + ChatColor.BOLD + command + ChatColor.RESET + COLOR_CMD;
         switch (command) {
@@ -177,21 +200,28 @@ public class DifficultyCommand implements CommandExecutor {
         }
     }
 
-    private String setDifficulty(Player player, Difficulty d, boolean skipPerm) {
+    /**
+     * Sets the difficulty of the player given that adequate permissions and requirements are in place to do so.
+     *
+     * @param player the player
+     * @param newD the new difficulty
+     * @param skipPerm whether to skip checking permissions
+     * @return the difficulty's name if the difficulty was successfully set, otherwise null
+     */
+    private String setDifficulty(Player player, Difficulty newD, boolean skipPerm) {
         Date date = new Date();
-        PlayerDifficulty pd = DifficultyHandler.getPlayerDifficulty(player);
-        Date dateChanged = pd.getDateChanged();
+        Date dateChanged = PlayerDataStorage.getDateChanged(player.getUniqueId());
         long timeDelay = ConfigHandler.getTimeDelay();
         if (dateChanged == null || (date.after(new Date(dateChanged.getTime() + timeDelay * 60000)) && timeDelay > -1) ||
                 player.hasPermission(PERMISSION + "ignoredelay") || skipPerm) {
             if (player.hasPermission(PERMISSION + "set") || skipPerm) {
-                if (!d.getNeedsPermission() || player.hasPermission(PERMISSION + "diff." + d.getName()) || skipPerm) {
-                    pd.setDateChanged(date);
-                    String dName = DifficultyHandler.setPlayerDifficulty(player, d).getNameFormatted();
+                if (newD.getDoesNotNeedPermission() || player.hasPermission(PERMISSION + "diff." + newD.getName()) || skipPerm) {
+                    DifficultyHandler.setPlayerDifficulty(player, newD);
+                    String dName = newD.getNameFormatted();
                     player.sendMessage(COLOR_MAIN + "Your difficulty has been changed to " + COLOR_CMD + dName);
                     return dName;
                 }
-                player.sendMessage(COLOR_ERROR + "You don't have permission to use " + d.getNameFormatted() + " difficulty!");
+                player.sendMessage(COLOR_ERROR + "You don't have permission to use " + newD.getNameFormatted() + " difficulty!");
                 return null;
             }
             player.sendMessage(COLOR_ERROR + "You don't have permission to change your current difficulty!");
@@ -205,14 +235,21 @@ public class DifficultyCommand implements CommandExecutor {
         return null;
     }
 
-    private void setDifficultyOthers(CommandSender sender, String pName, Difficulty d) {
+    /**
+     * Sets the difficulty of the player specified by the command sender given adequate permissions are in place.
+     *
+     * @param sender the command sender
+     * @param pName the name of the player
+     * @param newD the new difficulty of the player
+     */
+    private void setDifficultyOthers(CommandSender sender, String pName, Difficulty newD) {
         Player p = IDifficulty.getPlayer(pName);
         if (sender.equals(p)) {
-            setDifficulty(p, d, false);
+            setDifficulty(p, newD, false);
         } else if (sender.hasPermission(PERMISSION + "set.others")) {
             if(p != null) {
-                if (!d.getNeedsPermission() || sender.hasPermission(PERMISSION + "diff." + d.getName())){
-                    String dName = setDifficulty(p, d, true);
+                if (newD.getDoesNotNeedPermission() || sender.hasPermission(PERMISSION + "diff." + newD.getName())){
+                    String dName = setDifficulty(p, newD, true);
                     sender.sendMessage(COLOR_MAIN + p.getName() + "'s difficulty has been changed to " + COLOR_CMD + dName);
                 }
             } else {
@@ -223,6 +260,11 @@ public class DifficultyCommand implements CommandExecutor {
         }
     }
 
+    /**
+     * Sends a human-readable list of the available difficulties if the sender has permission to see it.
+     *
+     * @param sender the command sender
+     */
     private void sendDifficultyList(CommandSender sender) {
         if (sender.hasPermission(PERMISSION + "list")) {
             List<Difficulty> dList = DifficultyHandler.getDifficultyList();
@@ -238,6 +280,13 @@ public class DifficultyCommand implements CommandExecutor {
         }
     }
 
+    /**
+     * Sends detailed info about a specified difficulty if the difficulty exists and if the command sender
+     * has permission to see such info.
+     *
+     * @param sender the command sender
+     * @param difficulty the difficulty name
+     */
     private void sendDifficultyInfo(CommandSender sender, String difficulty) {
         if (!sender.hasPermission(PERMISSION + "info")) {
             sender.sendMessage(COLOR_ERROR + "You don't have permission to view difficulty info!");
@@ -281,6 +330,11 @@ public class DifficultyCommand implements CommandExecutor {
 
     }
 
+    /**
+     * Sends a player their current difficulty if they have permission to see it.
+     *
+     * @param player the player
+     */
     private void viewDifficulty(Player player) {
         if (player.hasPermission(PERMISSION + "view")) {
             player.sendMessage(COLOR_MAIN + "Your current difficulty is " + COLOR_CMD +
@@ -290,6 +344,12 @@ public class DifficultyCommand implements CommandExecutor {
         }
     }
 
+    /**
+     * Shows the command sender the difficulty of a player provided they have permission to see it.
+     *
+     * @param sender the command sender
+     * @param pName the player name
+     */
     private void viewDifficultyOthers(CommandSender sender, String pName) {
         Player p = IDifficulty.getPlayer(pName);
         if (sender.equals(p)) {
