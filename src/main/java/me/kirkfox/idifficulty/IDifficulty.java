@@ -45,7 +45,7 @@ public final class IDifficulty extends JavaPlugin {
             e.printStackTrace();
         }
 
-        new MetricsHandler();
+        new MetricsHandler(this);
 
         checkForUpdates();
 
@@ -69,7 +69,7 @@ public final class IDifficulty extends JavaPlugin {
     }
 
     private void registerListeners() {
-        Listener[] listeners = {new BlockExpDropListener(), new DifficultyChangeListener(),
+        Listener[] listeners = {new BlockEventListener(), new DifficultyChangeListener(),
                 new EntityDamageByEntityListener(), new EntityDamageListener(), new EntityDeathListener(),
                 new PlayerDeathListener(), new PlayerJoinListener(), new PlayerStarveUpdateListener()};
         for (Listener l : listeners) {
@@ -112,6 +112,7 @@ public final class IDifficulty extends JavaPlugin {
         return plugin;
     }
 
+    @Nullable
     public static Player getPlayer(String name) {
         return plugin.getServer().getPlayer(name);
     }

@@ -100,30 +100,32 @@ public class PlayerDataStorage {
      * @throws IOException if there is a problem reading the file
      */
     public static void loadDifficulties() throws IOException {
+
         Gson gson = new Gson();
         File file = new File(IDifficulty.getPlugin().getDataFolder().getAbsolutePath() + "/playerdata.json");
-        if (file.exists()) {
-            FileReader reader = new FileReader(file);
-            JsonArray playerData = gson.fromJson(reader, JsonArray.class);
-            PLAYER_DIFFICULTY_MAP.clear();
-            playerData.forEach(d -> {
-                JsonObject jsonData = (JsonObject) d;
-                String uuid = jsonData.get("UUID").getAsString();
-                Difficulty difficulty = DifficultyHandler.getDifficulty(jsonData.get("name").getAsString());
-                if (difficulty == null) difficulty = DifficultyHandler.getDefaultDifficulty();
-                String dateChanged = jsonData.get("dateChanged").getAsString();
-                PlayerDataObject dataObject;
-                try {
-                    dataObject = new PlayerDataObject(difficulty, dateChanged);
-                } catch (ParseException e) {
-                    IDifficulty.outputWarning("Invalid date format for " + uuid + "'s player data. Setting to null.");
-                    dataObject = new PlayerDataObject(difficulty);
-                }
-                PLAYER_DIFFICULTY_MAP.put(UUID.fromString(uuid), dataObject);
 
-                IDifficulty.outputLog("iDifficulty's player data loaded!");
-            });
-        }
+        if (!file.exists()) return;
+
+        FileReader reader = new FileReader(file);
+        JsonArray playerData = gson.fromJson(reader, JsonArray.class);
+        PLAYER_DIFFICULTY_MAP.clear();
+        playerData.forEach(d -> {
+            JsonObject jsonData = (JsonObject) d;
+            String uuid = jsonData.get("UUID").getAsString();
+            Difficulty difficulty = DifficultyHandler.getDifficulty(jsonData.get("name").getAsString());
+            if (difficulty == null) difficulty = DifficultyHandler.getDefaultDifficulty();
+            String dateChanged = jsonData.get("dateChanged").getAsString();
+            PlayerDataObject dataObject;
+            try {
+                dataObject = new PlayerDataObject(difficulty, dateChanged);
+            } catch (ParseException e) {
+                IDifficulty.outputWarning("Invalid date format for " + uuid + "'s player data. Setting to null.");
+                dataObject = new PlayerDataObject(difficulty);
+            }
+            PLAYER_DIFFICULTY_MAP.put(UUID.fromString(uuid), dataObject);
+
+            IDifficulty.outputLog("iDifficulty's player data loaded!");
+        });
     }
 
     /**

@@ -56,6 +56,6 @@ public class Difficulty {
 
     public int getMinStarveHealth() { return minStarveHealth; }
 
-    public boolean getDoesNotNeedPermission() { return !needsPermission; }
+    public boolean getNeedsPermission() { return needsPermission; }
 
 }

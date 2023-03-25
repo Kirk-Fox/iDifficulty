@@ -24,6 +24,18 @@ public class DifficultyCommand implements CommandExecutor {
     private static final ChatColor COLOR_CMD = ChatColor.GOLD;
     private static final ChatColor COLOR_ERROR = ChatColor.RED;
 
+    private static final String IDIFF_SET_USAGE = COLOR_MAIN + "Use this command to set your own difficulty to " +
+            COLOR_CMD + "<difficulty>" + COLOR_MAIN + " or set " + COLOR_CMD + "<player>" + COLOR_MAIN +
+            "'s difficulty to " + COLOR_CMD + "<difficulty>";
+    private static final String IDIFF_LIST_USAGE = COLOR_MAIN + "Use this command to see a list of difficulties.";
+    private static final String IDIFF_INFO_USAGE = COLOR_MAIN + "Use this command to view information about the " +
+            "difficulty named \"" + COLOR_CMD + "<difficulty>" + COLOR_MAIN + "\" including whether a player will " +
+            "keep their inventory on death, the amount of damage done by enemies, the experience bonus/penalty from " +
+            "mobs and ores, and more.";
+    private static final String IDIFF_VIEW_USAGE = COLOR_MAIN + "Use this command to set your own difficulty to view " +
+            "your own difficulty or view " + COLOR_CMD + "<player>" + COLOR_MAIN + "'s difficulty";
+    private static final String IDIFF_RELOAD_USAGE = COLOR_MAIN + "Use this command to reload iDifficulty's config.yml file";
+
     /**
      * Called when a user uses the /idifficulty command
      *
@@ -34,12 +46,11 @@ public class DifficultyCommand implements CommandExecutor {
      * @return true (invalid command use is handled by plugin)
      */
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
+
         boolean isPlayer = sender instanceof Player;
-        Player player = null;
-        if (isPlayer) {
-            player = (Player) sender;
-        }
+        Player player = (isPlayer ? (Player) sender : null);
+
         if (args.length == 0) {
             PluginDescriptionFile description = IDifficulty.getPlugin().getDescription();
             sender.sendMessage(COLOR_MAIN + "This server is running " + COLOR_CMD + description.getName() +
@@ -56,6 +67,7 @@ public class DifficultyCommand implements CommandExecutor {
                     helpDifficultySpecific(sender, args[1]);
                 }
                 break;
+
             case "set":
                 if (args.length < 2) {
                     sender.sendMessage(COLOR_MAIN + "Please specify a difficulty. Type " +
@@ -68,16 +80,18 @@ public class DifficultyCommand implements CommandExecutor {
                     sender.sendMessage(COLOR_ERROR + "Invalid option for <difficulty>. Type " + COLOR_CMD +
                             "/idiff list" + COLOR_ERROR + " to see a list of possible difficulties.");
                 } else if (isPlayer && args.length < 3) {
-                    setDifficulty(player, d, false);
+                    setDifficulty(player, d);
                 } else if (args.length > 2) {
                     setDifficultyOthers(sender, args[2], d);
                 } else {
                     sender.sendMessage(COLOR_ERROR + "Only online players may change their own difficulty!");
                 }
                 break;
+
             case "list":
                 sendDifficultyList(sender);
                 break;
+
             case "info":
                 if (args.length < 2) {
                     sender.sendMessage(COLOR_MAIN + "Please specify a difficulty. Type " + COLOR_CMD +
@@ -86,6 +100,7 @@ public class DifficultyCommand implements CommandExecutor {
                 }
                 sendDifficultyInfo(sender, args[1]);
                 break;
+
             case "view":
                 if (args.length == 1) {
                     if (isPlayer) {
@@ -97,6 +112,7 @@ public class DifficultyCommand implements CommandExecutor {
                     viewDifficultyOthers(sender, args[1]);
                 }
                 break;
+
             case "reload":
                 if (sender.hasPermission(PERMISSION + "reload")) {
                     ConfigHandler.reloadConfig();
@@ -105,6 +121,7 @@ public class DifficultyCommand implements CommandExecutor {
                     sender.sendMessage(COLOR_ERROR + "You don't have permission to reload the iDifficulty config file!");
                 }
                 break;
+
             default:
                 sender.sendMessage(COLOR_ERROR + "Unrecognized subcommand! Type " + COLOR_CMD +
                         "/idiff help" + COLOR_ERROR + " for a list of possible commands.");
@@ -119,81 +136,88 @@ public class DifficultyCommand implements CommandExecutor {
      * @param sender the command sender
      * @param isPlayer whether the sender is a player
      */
-    private void helpDifficulty(CommandSender sender, boolean isPlayer) {
+    private void helpDifficulty(@NotNull CommandSender sender, boolean isPlayer) {
+
         boolean hasPerm = false;
+
         if (sender.hasPermission(PERMISSION + "set") && isPlayer) {
             sender.sendMessage(COLOR_CMD + "/idiff set <difficulty>" + COLOR_MAIN +
                     " - Sets your difficulty");
             hasPerm = true;
         }
+
         if (sender.hasPermission(PERMISSION + "set.others")) {
             sender.sendMessage(COLOR_CMD + "/idiff set <difficulty> <player>" + COLOR_MAIN + " - Sets " +
                     COLOR_CMD + "<player>" + COLOR_MAIN + "'s difficulty");
             hasPerm = true;
         }
+
         if (sender.hasPermission(PERMISSION + "list")) {
             sender.sendMessage(COLOR_CMD + "/idiff list" + COLOR_MAIN + " - Gives a list of difficulties");
             hasPerm = true;
         }
+
         if (sender.hasPermission(PERMISSION + "info")) {
             sender.sendMessage(COLOR_CMD + "/idiff info <difficulty>" + COLOR_MAIN +
                     " - Gives info on " + COLOR_CMD + "<difficulty>");
             hasPerm = true;
         }
+
         if ((sender.hasPermission(PERMISSION + "view")) && isPlayer) {
             sender.sendMessage(COLOR_CMD + "/idiff view" + COLOR_MAIN +
                     " - Gives your current difficulty");
             hasPerm = true;
         }
+
         if (sender.hasPermission(PERMISSION + "view.others")) {
             sender.sendMessage(COLOR_CMD + "/idiff view <player>" + COLOR_MAIN + " - Gives " +
                     COLOR_CMD + "<player>" + COLOR_MAIN + "'s current difficulty");
             hasPerm = true;
         }
+
         if (sender.hasPermission(PERMISSION + "reload")) {
             sender.sendMessage(COLOR_CMD + "/idiff reload" + COLOR_MAIN + " - Reloads iDifficulty config file");
         }
+
         if (!hasPerm) {
             sender.sendMessage(COLOR_ERROR + "You don't have access to any commands associated with the iDifficulty plugin. " +
                     "Notify an administrator if you think this is a mistake.");
         }
+
     }
 
     /**
-     * Handles the /idiff help command when a command is specified.
+     * Handles the /idiff help command when a subcommand is specified, providing more detail on that subcommand.
      *
      * @param sender the command sender
      * @param command the subcommand in question
      */
-    private void helpDifficultySpecific(CommandSender sender, @NotNull String command) {
+    private void helpDifficultySpecific(@NotNull CommandSender sender, @NotNull String command) {
+
         String commandUsage = COLOR_MAIN + "Usage: " + COLOR_CMD + "/idiff " + ChatColor.BOLD + command + ChatColor.RESET + COLOR_CMD;
+
         switch (command) {
             case "set":
-                sender.sendMessage(commandUsage + " <difficulty> [<player>]",
-                    COLOR_MAIN + "Use this command to set your own difficulty to " + COLOR_CMD + "<difficulty>" +
-                            COLOR_MAIN + " or set " + COLOR_CMD + "<player>" + COLOR_MAIN + "'s difficulty to " +
-                            COLOR_CMD + "<difficulty>");
+                sender.sendMessage(commandUsage + " <difficulty> [<player>]", IDIFF_SET_USAGE);
                 break;
+
             case "list":
-                sender.sendMessage(commandUsage, COLOR_MAIN + "Use this command to see a list of difficulties.",
-                    COLOR_MAIN + "For more information on a specific difficulty, type " + COLOR_CMD +
-                            "/idiff info <difficulty>");
+                sender.sendMessage(commandUsage, IDIFF_LIST_USAGE, COLOR_MAIN + "For more information on a " +
+                        "specific difficulty, type " + COLOR_CMD + "/idiff info <difficulty>");
                 break;
+
             case "info":
-                sender.sendMessage(commandUsage + " <difficulty>",
-                    COLOR_MAIN + "Use this command to view information about the difficulty named \"" + COLOR_CMD +
-                            "<difficulty>" + COLOR_MAIN + "\" including whether a player will keep their inventory " +
-                            "on death, the amount of damage done by enemies, the experience bonus/penalty from mobs " +
-                            "and ores, and more.");
+                sender.sendMessage(commandUsage + " <difficulty>", IDIFF_INFO_USAGE);
                 break;
+
             case "view":
-                sender.sendMessage(commandUsage + " [<player>]",
-                    COLOR_MAIN + "Use this command to set your own difficulty to view your own difficulty or view " +
-                            COLOR_CMD + "<player>" + COLOR_MAIN + "'s difficulty");
+                sender.sendMessage(commandUsage + " [<player>]", IDIFF_VIEW_USAGE);
                 break;
+
             case "reload":
-                sender.sendMessage(commandUsage, COLOR_MAIN + "Use this command to reload iDifficulty's config.yml file");
+                sender.sendMessage(commandUsage, IDIFF_RELOAD_USAGE);
                 break;
+
             default:
                 sender.sendMessage(COLOR_ERROR + "Unrecognized subcommand! Type " + COLOR_CMD +
                     "/idiff help" + COLOR_ERROR + " for a list of possible commands.");
@@ -205,34 +229,52 @@ public class DifficultyCommand implements CommandExecutor {
      *
      * @param player the player
      * @param newD the new difficulty
-     * @param skipPerm whether to skip checking permissions
-     * @return the difficulty's name if the difficulty was successfully set, otherwise null
      */
-    private String setDifficulty(Player player, Difficulty newD, boolean skipPerm) {
+
+    private void setDifficulty(@NotNull Player player, @NotNull Difficulty newD) {
         Date date = new Date();
         Date dateChanged = PlayerDataStorage.getDateChanged(player.getUniqueId());
         long timeDelay = ConfigHandler.getTimeDelay();
-        if (dateChanged == null || (date.after(new Date(dateChanged.getTime() + timeDelay * 60000)) && timeDelay > -1) ||
-                player.hasPermission(PERMISSION + "ignoredelay") || skipPerm) {
-            if (player.hasPermission(PERMISSION + "set") || skipPerm) {
-                if (newD.getDoesNotNeedPermission() || player.hasPermission(PERMISSION + "diff." + newD.getName()) || skipPerm) {
-                    DifficultyHandler.setPlayerDifficulty(player, newD);
-                    String dName = newD.getNameFormatted();
-                    player.sendMessage(COLOR_MAIN + "Your difficulty has been changed to " + COLOR_CMD + dName);
-                    return dName;
-                }
-                player.sendMessage(COLOR_ERROR + "You don't have permission to use " + newD.getNameFormatted() + " difficulty!");
-                return null;
+
+        if (dateChanged != null && !player.hasPermission(PERMISSION + "ignoredelay")) {
+
+            if (date.before(new Date(dateChanged.getTime() + timeDelay * 60000))) {
+                long timeLeft = dateChanged.getTime() + timeDelay * 60000 - date.getTime();
+                String timeLeftString = (timeLeft < 60000) ? timeLeft/1000 + " seconds" : timeLeft/60000 + " minutes";
+                player.sendMessage(COLOR_ERROR + "You can't change your difficulty for another " + timeLeftString);
+                return;
             }
-            player.sendMessage(COLOR_ERROR + "You don't have permission to change your current difficulty!");
-        } else if (timeDelay < 0) {
-            player.sendMessage(COLOR_ERROR + "You have already set your difficulty. If this was a mistake, please notify an administrator.");
-        } else {
-            long timeLeft = dateChanged.getTime() + timeDelay * 60000 - date.getTime();
-            String timeLeftString = (timeLeft < 60000) ? timeLeft/1000 + " seconds" : timeLeft/60000 + " minutes";
-            player.sendMessage(COLOR_ERROR + "You can't change your difficulty for another " + timeLeftString);
+
+            if (timeDelay < 0) {
+                player.sendMessage(COLOR_ERROR + "You have already set your difficulty. If this was a mistake," +
+                        "please notify an administrator.");
+                return;
+            }
+
         }
-        return null;
+
+        if (!player.hasPermission(PERMISSION + "set")) {
+            player.sendMessage(COLOR_ERROR + "You don't have permission to change your current difficulty!");
+            return;
+        }
+
+        if (newD.getNeedsPermission() && !player.hasPermission(PERMISSION + "diff." + newD.getName())) {
+            player.sendMessage(COLOR_ERROR + "You don't have permission to use " + newD.getNameFormatted() + " difficulty!");
+            return;
+        }
+
+        setDifficultyPermitted(player, newD);
+    }
+
+    /**
+     * Sets the difficulty of the player without checking permissions.
+     *
+     * @param player the player
+     * @param newD the new difficulty
+     */
+    private void setDifficultyPermitted(@NotNull Player player, @NotNull Difficulty newD) {
+        DifficultyHandler.setPlayerDifficulty(player, newD);
+        player.sendMessage(COLOR_MAIN + "Your difficulty has been changed to " + COLOR_CMD + newD.getNameFormatted());
     }
 
     /**
@@ -242,22 +284,32 @@ public class DifficultyCommand implements CommandExecutor {
      * @param pName the name of the player
      * @param newD the new difficulty of the player
      */
-    private void setDifficultyOthers(CommandSender sender, String pName, Difficulty newD) {
+    private void setDifficultyOthers(@NotNull CommandSender sender, @NotNull String pName, @NotNull Difficulty newD) {
+
         Player p = IDifficulty.getPlayer(pName);
+
         if (sender.equals(p)) {
-            setDifficulty(p, newD, false);
-        } else if (sender.hasPermission(PERMISSION + "set.others")) {
-            if(p != null) {
-                if (newD.getDoesNotNeedPermission() || sender.hasPermission(PERMISSION + "diff." + newD.getName())){
-                    String dName = setDifficulty(p, newD, true);
-                    sender.sendMessage(COLOR_MAIN + p.getName() + "'s difficulty has been changed to " + COLOR_CMD + dName);
-                }
-            } else {
-                sender.sendMessage(COLOR_ERROR + "The player '" + pName + "' was not found!");
-            }
-        } else {
-            sender.sendMessage(COLOR_ERROR + "You don't have permission to change other players' difficulties!");
+            setDifficulty(p, newD);
+            return;
         }
+
+        if (!sender.hasPermission(PERMISSION + "set.others")) {
+            sender.sendMessage(COLOR_ERROR + "You don't have permission to change other players' difficulties!");
+            return;
+        }
+
+        if (p == null) {
+            sender.sendMessage(COLOR_ERROR + "The player '" + pName + "' was not found!");
+            return;
+        }
+
+        if (newD.getNeedsPermission() && !sender.hasPermission(PERMISSION + "diff." + newD.getName())) {
+            sender.sendMessage(COLOR_ERROR + "You do not have permission to use this difficulty!");
+            return;
+        }
+
+        setDifficultyPermitted(p, newD);
+        sender.sendMessage(COLOR_MAIN + p.getName() + "'s difficulty has been changed to " + COLOR_CMD + newD.getNameFormatted());
     }
 
     /**
@@ -265,19 +317,23 @@ public class DifficultyCommand implements CommandExecutor {
      *
      * @param sender the command sender
      */
-    private void sendDifficultyList(CommandSender sender) {
-        if (sender.hasPermission(PERMISSION + "list")) {
-            List<Difficulty> dList = DifficultyHandler.getDifficultyList();
-            StringBuilder dString = new StringBuilder();
-            int s = dList.size();
-            for (int i = 0; i < s; i++) {
-                String name = dList.get(i).getNameFormatted();
-                dString.append(i < s - 1 ? name + ", " : "and " + name);
-            }
-            sender.sendMessage(COLOR_MAIN + "The available difficulties are " + dString);
-        } else {
+    private void sendDifficultyList(@NotNull CommandSender sender) {
+
+        if (!sender.hasPermission(PERMISSION + "list")) {
             sender.sendMessage(COLOR_ERROR + "You don't have permission to view a list of difficulties!");
+            return;
         }
+
+        List<Difficulty> dList = DifficultyHandler.getDifficultyList();
+        StringBuilder dString = new StringBuilder();
+        int s = dList.size();
+        for (int i = 0; i < s; i++) {
+            String name = dList.get(i).getNameFormatted();
+            dString.append(i < s - 1 ? name + ", " : "and " + name);
+        }
+
+        sender.sendMessage(COLOR_MAIN + "The available difficulties are " + dString);
+
     }
 
     /**
@@ -287,13 +343,15 @@ public class DifficultyCommand implements CommandExecutor {
      * @param sender the command sender
      * @param difficulty the difficulty name
      */
-    private void sendDifficultyInfo(CommandSender sender, String difficulty) {
+    private void sendDifficultyInfo(@NotNull CommandSender sender, @NotNull String difficulty) {
+
         if (!sender.hasPermission(PERMISSION + "info")) {
             sender.sendMessage(COLOR_ERROR + "You don't have permission to view difficulty info!");
             return;
         }
 
         Difficulty d = DifficultyHandler.getDifficulty(difficulty);
+
         if (d == null) {
             sender.sendMessage(COLOR_ERROR + "Invalid option for <difficulty>. Type " +
                     COLOR_CMD + "/idiff list" + COLOR_ERROR + " to see a list of possible difficulties.");
@@ -335,7 +393,7 @@ public class DifficultyCommand implements CommandExecutor {
      *
      * @param player the player
      */
-    private void viewDifficulty(Player player) {
+    private void viewDifficulty(@NotNull Player player) {
         if (player.hasPermission(PERMISSION + "view")) {
             player.sendMessage(COLOR_MAIN + "Your current difficulty is " + COLOR_CMD +
                     DifficultyHandler.getPlayerDifficulty(player).getNameFormatted());
@@ -350,20 +408,25 @@ public class DifficultyCommand implements CommandExecutor {
      * @param sender the command sender
      * @param pName the player name
      */
-    private void viewDifficultyOthers(CommandSender sender, String pName) {
+    private void viewDifficultyOthers(@NotNull CommandSender sender, @NotNull String pName) {
         Player p = IDifficulty.getPlayer(pName);
         if (sender.equals(p)) {
             viewDifficulty(p);
-        } else if (sender.hasPermission(PERMISSION + "view.others")) {
-            if(p != null) {
-                sender.sendMessage(COLOR_MAIN + p.getName() + "'s current difficulty is " + COLOR_CMD +
-                        DifficultyHandler.getPlayerDifficulty(p).getNameFormatted());
-            } else {
-                sender.sendMessage(COLOR_ERROR + "The player '" + pName + "' was not found!");
-            }
-        } else {
-            sender.sendMessage(COLOR_ERROR + "You don't have permission to view other players' difficulties!");
+            return;
         }
+
+        if (!sender.hasPermission(PERMISSION + "view.others")) {
+            sender.sendMessage(COLOR_ERROR + "You don't have permission to view other players' difficulties!");
+            return;
+        }
+
+        if(p == null) {
+            sender.sendMessage(COLOR_ERROR + "The player '" + pName + "' was not found!");
+            return;
+        }
+
+        sender.sendMessage(COLOR_MAIN + p.getName() + "'s current difficulty is " + COLOR_CMD +
+                DifficultyHandler.getPlayerDifficulty(p).getNameFormatted());
     }
 
 }

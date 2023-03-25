@@ -3,9 +3,9 @@ package me.kirkfox.idifficulty;
 import me.kirkfox.idifficulty.difficulty.Difficulty;
 import me.kirkfox.idifficulty.difficulty.DifficultyHandler;
 import me.kirkfox.idifficulty.difficulty.PlayerDataStorage;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.*;
@@ -241,8 +241,11 @@ public class ConfigHandler {
      *
      * @return the default difficulty's name
      */
+    @NotNull
     public static String getDefaultDifficultyName() {
-        return config.getString("default");
+        String name = config.getString("default");
+        assert name != null;
+        return name;
     }
 
 }

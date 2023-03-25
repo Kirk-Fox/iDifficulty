@@ -85,21 +85,18 @@ public class EntityDamageByEntityListener implements Listener {
      * @return if the entity is a player area effect cloud
      */
     private boolean isPlayerAreaEffectCloud(Entity entity) {
-        try {
-            return entity.getType() == EntityType.AREA_EFFECT_CLOUD && isPlayerProjectileSource(((AreaEffectCloud) entity).getSource());
-        } catch (NoSuchFieldError e) {
-            return false;
-        }
+        return (entity.getType().name().equals("AREA_EFFECT_CLOUD") &&
+                isPlayerProjectileSource(((AreaEffectCloud) entity).getSource()));
     }
 
     /**
-     * Checks if a projectile source is a player
+     * Checks if a projectile originates from a player.
      *
      * @param projSource the projectile source
-     * @return if the projectile source is a player
+     * @return if the projectile source is a player or block
      */
     private boolean isPlayerProjectileSource(ProjectileSource projSource) {
-        return projSource instanceof Player || projSource instanceof BlockProjectileSource;
+        return (projSource instanceof Player || projSource instanceof BlockProjectileSource);
     }
 
 }

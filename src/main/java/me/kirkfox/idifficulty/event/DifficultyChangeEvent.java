@@ -1,6 +1,7 @@
 package me.kirkfox.idifficulty.event;
 
 import me.kirkfox.idifficulty.difficulty.Difficulty;
+import me.kirkfox.idifficulty.difficulty.DifficultyHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -19,18 +20,17 @@ public class DifficultyChangeEvent extends PlayerEvent implements Cancellable {
      * Initializes DifficultyChangeEvent.
      *
      * @param player the player that is changing difficulty
-     * @param oldDiff the former difficulty
      * @param newDiff the new difficulty
      */
-    public DifficultyChangeEvent(Player player, Difficulty oldDiff, Difficulty newDiff) {
+    public DifficultyChangeEvent(Player player, Difficulty newDiff) {
         super(player);
-        this.oldDifficulty = oldDiff;
+        this.oldDifficulty = DifficultyHandler.getPlayerDifficulty(player);
         this.newDifficulty = newDiff;
         this.cancel = false;
     }
 
     /**
-     * Gets the old difficulty.
+     * Gets the difficulty before the event.
      *
      * @return the old difficulty
      */

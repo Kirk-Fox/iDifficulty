@@ -124,9 +124,9 @@ public class EntityDamageListener implements Listener {
      */
     private static boolean shouldStarve(Player player, double damage) {
         double h = player.getHealth() - damage;
-        return ConfigHandler.getToggle("minStarveHealth") && player.getFoodLevel() == 0 &&
+        return (ConfigHandler.getToggle("minStarveHealth") && player.getFoodLevel() == 0 &&
                 h <= HEALTH_MAP.get(player.getWorld().getDifficulty()) &&
-                DifficultyHandler.getPlayerDifficulty(player).getMinStarveHealth() < h;
+                DifficultyHandler.getPlayerDifficulty(player).getMinStarveHealth() < h);
     }
 
     private static boolean shouldStarve(Player player) {
@@ -142,8 +142,8 @@ public class EntityDamageListener implements Listener {
      * @return if the plugin needs to prevent the player from starving
      */
     private static boolean shouldNotStarve(Player player, double damage) {
-        return ConfigHandler.getToggle("minStarveHealth") &&
-                DifficultyHandler.getPlayerDifficulty(player).getMinStarveHealth() > player.getHealth() - damage;
+        return (ConfigHandler.getToggle("minStarveHealth") &&
+                DifficultyHandler.getPlayerDifficulty(player).getMinStarveHealth() > player.getHealth() - damage);
     }
 
     /**

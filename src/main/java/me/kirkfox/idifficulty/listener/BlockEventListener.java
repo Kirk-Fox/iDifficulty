@@ -14,18 +14,17 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 
-public class BlockExpDropListener implements Listener {
+public class BlockEventListener implements Listener {
 
     private final Set<Material> doubledBlocks = new HashSet<>();
 
     /**
      * Initializes blocks that can be doubled.
      */
-    public BlockExpDropListener() {
+    public BlockEventListener() {
 
         String[] doubledBlockKeys = {"AMETHYST_CLUSTER", "COAL_ORE", "COPPER_ORE", "DEEPSLATE_COAL_ORE",
                 "DEEPSLATE_COPPER_ORE", "DEEPSLATE_DIAMOND_ORE", "DEEPSLATE_EMERALD_ORE", "DEEPSLATE_GOLD_ORE",
@@ -64,16 +63,16 @@ public class BlockExpDropListener implements Listener {
 
         // Gets list of drops to double. The method Block.getDrops(tool, entity) does not exist in all versions.
         ItemStack tool = p.getInventory().getItemInMainHand();
-        ItemStack[] drops = b.getDrops(tool).toArray(new ItemStack[0]);
+        List<ItemStack> drops = new ArrayList<>(b.getDrops(tool));
 
         // Sets block to air to stop normal drops.
         b.setType(Material.AIR);
         // Checks if the drops should be doubled (only when a block is not dropping itself).
-        boolean isDoubled = drops.length != 1 || drops[0].getType() != m;
-        for (ItemStack i : drops) {
+        boolean isDoubled = drops.size() != 1 || drops.get(0).getType() != m;
+        drops.forEach(i -> {
             b.getWorld().dropItemNaturally(b.getLocation(), i);
             if (isDoubled) b.getWorld().dropItemNaturally(b.getLocation(), i);
-        }
+        });
     }
 
     /**

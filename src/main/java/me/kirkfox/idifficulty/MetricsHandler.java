@@ -10,8 +10,8 @@ public class MetricsHandler extends Metrics {
 
     private static final int BSTATS_ID = 12440;
 
-    public MetricsHandler() {
-        super(IDifficulty.getPlugin(), BSTATS_ID);
+    public MetricsHandler(IDifficulty plugin) {
+        super(plugin, BSTATS_ID);
 
         addCustomChart(new SimplePie("difficultyNumber", () -> String.valueOf(DifficultyHandler.getDifficultyNumber())));
         addCustomChart(new SimplePie("defaultDifficulty", () -> DifficultyHandler.getDefaultDifficulty().getName()));

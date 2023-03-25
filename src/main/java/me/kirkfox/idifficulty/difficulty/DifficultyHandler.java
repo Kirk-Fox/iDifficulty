@@ -1,16 +1,14 @@
 package me.kirkfox.idifficulty.difficulty;
 
 import me.kirkfox.idifficulty.ConfigHandler;
+import me.kirkfox.idifficulty.IDifficulty;
 import me.kirkfox.idifficulty.event.DifficultyChangeEvent;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DifficultyHandler {
 
@@ -46,8 +44,9 @@ public class DifficultyHandler {
      *
      * @return an ordered list of the difficulties
      */
-    public static List<Difficulty> getDifficultyList() {
-        return DIFFICULTY_LIST;
+    @NotNull
+    public static @UnmodifiableView List<Difficulty> getDifficultyList() {
+        return Collections.unmodifiableList(DIFFICULTY_LIST);
     }
 
     /**
@@ -64,25 +63,25 @@ public class DifficultyHandler {
     /**
      * Gets the difficulty of a given player.
      *
-     * @param p the player
+     * @param player the player
      * @return the difficulty setting for the player
      */
     @NotNull
-    public static Difficulty getPlayerDifficulty(Player p) {
-        return PlayerDataStorage.readDifficulty(p.getUniqueId());
+    public static Difficulty getPlayerDifficulty(@NotNull Player player) {
+        return PlayerDataStorage.readDifficulty(player.getUniqueId());
     }
 
     /**
      * Sets the difficulty of a given player while calling {@link DifficultyChangeEvent}.
      *
-     * @param p the player
-     * @param d the new difficulty
+     * @param player the player
+     * @param diff the new difficulty
      */
-    public static void setPlayerDifficulty(Player p, Difficulty d) {
-        DifficultyChangeEvent event = new DifficultyChangeEvent(p, getPlayerDifficulty(p), d);
-        Bukkit.getPluginManager().callEvent(event);
+    public static void setPlayerDifficulty(Player player, Difficulty diff) {
+        DifficultyChangeEvent event = new DifficultyChangeEvent(player, diff);
+        IDifficulty.getPlugin().getServer().getPluginManager().callEvent(event);
         Difficulty newD = event.isCancelled() ? event.getOldDifficulty() : event.getNewDifficulty();
-        PlayerDataStorage.updateDifficulty(p.getUniqueId(), newD);
+        PlayerDataStorage.updateDifficulty(player.getUniqueId(), newD);
     }
 
     /**
@@ -90,8 +89,9 @@ public class DifficultyHandler {
      *
      * @return the default difficulty
      */
+    @NotNull
     public static Difficulty getDefaultDifficulty() {
-        return defaultDifficulty;
+        return (defaultDifficulty == null ? DIFFICULTY_LIST.get(0) : defaultDifficulty);
     }
 
 }
