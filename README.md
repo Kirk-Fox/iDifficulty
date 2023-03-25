@@ -50,5 +50,6 @@ The following are a few features that I am considering working on in the future
 - Vault interaction involving losing an amount of money on death depending on difficulty (far future)
 - Plugin integration that will revoke or give permissions to players depending on their difficulty (far future)
 - ~~Further backwards compatibility~~ (Backwards compatability to 1.8 will likely be implemented in v0.2.0)
+- Different difficulties allowing custom permissions
 
 If you notice any issues, please report them on the issues tab
