@@ -69,11 +69,6 @@ public class PlayerDeathListener implements Listener {
             event.setDroppedExp(keepExp ? 0 : Math.min(7*p.getLevel(), 100));
         }
 
-        // Check if player was killed by difficulty-induced starvation. If so, adjust death message accordingly.
-        if (EntityDamageListener.isDyingFromStarvation(p)) {
-            event.setDeathMessage(p.getName() + " starved to death");
-        }
-
         // Check if money loss on death is enabled and if economy is enabled.
         if (ConfigHandler.getToggle("moneyLostOnDeath") && economy != null) {
             economy.withdrawPlayer(p, d.getMoneyLostOnDeath());

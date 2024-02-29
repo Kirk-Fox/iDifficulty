@@ -5,6 +5,8 @@ import me.kirkfox.idifficulty.IDifficulty;
 import me.kirkfox.idifficulty.difficulty.DifficultyHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,7 +22,6 @@ public class EntityDamageListener implements Listener {
 
     private static final Map<Difficulty, Double> HEALTH_MAP = new HashMap<>();
     private static final Set<Player> STARVING_SET = new HashSet<>();
-    private static final Set<Player> DYING_SET = new HashSet<>();
 
     /**
      * Initializes the listener and stores the typical starvation limits in HEALTH_MAP.
@@ -77,13 +78,12 @@ public class EntityDamageListener implements Listener {
         if (shouldStarve(player)) {
             STARVING_SET.add(player);
 
-            EntityDamageEvent starveEvent = new EntityDamageEvent(player,
-                    EntityDamageEvent.DamageCause.STARVATION, damage);
+            EntityDamageEvent starveEvent = new EntityDamageEvent(
+                    player, EntityDamageEvent.DamageCause.STARVATION,
+                    DamageSource.builder(DamageType.STARVE).build(), damage
+            );
             Bukkit.getPluginManager().callEvent(starveEvent);
-            double d = starveEvent.getDamage();
-            // If the damage would kill the player, add the player to the DYING_SET for usage by PlayerDeathListener.
-            if (player.getHealth() <= d) DYING_SET.add(player);
-            player.damage(d);
+            player.damage(starveEvent.getDamage(), starveEvent.getDamageSource());
         } else {
             STARVING_SET.remove(player);
         }
@@ -144,20 +144,6 @@ public class EntityDamageListener implements Listener {
     private static boolean shouldNotStarve(Player player, double damage) {
         return (ConfigHandler.getToggle("minStarveHealth") &&
                 DifficultyHandler.getPlayerDifficulty(player).getMinStarveHealth() > player.getHealth() - damage);
-    }
-
-    /**
-     * Checks if the player has received starvation damage that would kill them.
-     *
-     * @param player the dying player
-     * @return if the player's final damage was from starvation
-     */
-    public static boolean isDyingFromStarvation(Player player) {
-        if (DYING_SET.contains(player)) {
-            DYING_SET.remove(player);
-            return true;
-        }
-        return false;
     }
 
     /**
