@@ -83,7 +83,7 @@ public class PlayerDataStorage {
         PLAYER_DIFFICULTY_MAP.forEach((k, v) -> {
             JsonObject jsonData = new JsonObject();
             jsonData.addProperty("UUID", k.toString());
-            jsonData.addProperty("dateChanged", (v.dateChanged == null) ? null
+            jsonData.addProperty("dateChanged", (v.dateChanged == null) ? ""
                                                         : DateFormat.getDateTimeInstance().format(v.dateChanged));
             jsonData.addProperty("name", v.difficulty.getName());
             playerData.add(jsonData);
@@ -156,7 +156,7 @@ public class PlayerDataStorage {
 
         PlayerDataObject(Difficulty difficulty, String dateChanged) throws ParseException {
             this.difficulty = difficulty;
-            this.dateChanged = DateFormat.getDateTimeInstance().parse(dateChanged);
+            this.dateChanged = (dateChanged.equals("")) ? null : DateFormat.getDateTimeInstance().parse(dateChanged);
         }
 
         public PlayerDataObject(Difficulty difficulty) {
