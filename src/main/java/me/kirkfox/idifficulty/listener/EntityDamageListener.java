@@ -13,14 +13,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class EntityDamageListener implements Listener {
 
-    private static final Map<Difficulty, Double> HEALTH_MAP = new HashMap<>();
+    private static final Map<Difficulty, Double> HEALTH_MAP = new EnumMap<>(Difficulty.class);
     private static final Set<Player> STARVING_SET = new HashSet<>();
 
     /**
@@ -40,8 +40,8 @@ public class EntityDamageListener implements Listener {
      */
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
-        // Exit if entity is not player.
-        if (!(event.getEntity() instanceof Player)) return;
+        // Exit if entity is not player or if variable starvation is disabled.
+        if (!(event.getEntity() instanceof Player) || !ConfigHandler.getToggle("minStarveHealth")) return;
 
         Player p = (Player) event.getEntity();
         // If the player was not already starving exit while checking for starvation.
@@ -52,7 +52,7 @@ public class EntityDamageListener implements Listener {
         }
 
         // Check if plugin needs to starve player.
-        if (shouldStarve(p, event.getDamage())) {
+        if (shouldForceStarve(p, event.getDamage())) {
             STARVING_SET.add(p);
             // Starve player after the player's starvation rate.
             new BukkitRunnable() {
@@ -63,7 +63,8 @@ public class EntityDamageListener implements Listener {
             }.runTaskLater(IDifficulty.getPlugin(), getStarvationRate(p));
         } else {
             // Check if plugin needs to prevent starvation.
-            if (shouldNotStarve(p, event.getDamage())) event.setCancelled(true);
+            if (DifficultyHandler.getPlayerDifficulty(p).getMinStarveHealth() > p.getHealth() - event.getDamage())
+                event.setCancelled(true);
             STARVING_SET.remove(p);
         }
     }
@@ -75,7 +76,7 @@ public class EntityDamageListener implements Listener {
      * @param damage starvation damage
      */
     public static void starve(Player player, double damage) {
-        if (shouldStarve(player)) {
+        if (shouldForceStarve(player)) {
             STARVING_SET.add(player);
 
             EntityDamageEvent starveEvent = new EntityDamageEvent(
@@ -83,7 +84,9 @@ public class EntityDamageListener implements Listener {
                     DamageSource.builder(DamageType.STARVE).build(), damage
             );
             Bukkit.getPluginManager().callEvent(starveEvent);
-            player.damage(starveEvent.getDamage(), starveEvent.getDamageSource());
+            if (!starveEvent.isCancelled()) {
+                player.damage(starveEvent.getDamage(), starveEvent.getDamageSource());
+            }
         } else {
             STARVING_SET.remove(player);
         }
@@ -114,36 +117,21 @@ public class EntityDamageListener implements Listener {
 
     /**
      * Checks a player's health and the damage being applied to the player to determine if the player should starve.
-     * The method checks if variable starvation is enabled, if the player has an empty food bar, if the player
-     * will drop to or below the default starvation limit, and if the players minimum starvation is below the player's
-     * resulting health.
+     * The method checks if the player has an empty food bar, if the player will drop to or below the default starvation limit,
+     * and if the players minimum starvation is below the player's resulting health.
      *
      * @param player the starving player
      * @param damage the damage on the player
      * @return if the plugin needs to starve the player after the event
      */
-    private static boolean shouldStarve(Player player, double damage) {
+    private static boolean shouldForceStarve(Player player, double damage) {
         double h = player.getHealth() - damage;
-        return (ConfigHandler.getToggle("minStarveHealth") && player.getFoodLevel() == 0 &&
-                h <= HEALTH_MAP.get(player.getWorld().getDifficulty()) &&
+        return (player.getFoodLevel() == 0 && h <= HEALTH_MAP.get(player.getWorld().getDifficulty()) &&
                 DifficultyHandler.getPlayerDifficulty(player).getMinStarveHealth() < h);
     }
 
-    private static boolean shouldStarve(Player player) {
-        return shouldStarve(player, 0.0);
-    }
-
-    /**
-     * Checks if the player must have starvation damage prevented. The method checks if variable starvation is enabled
-     * and if the damage would drop the player below their starvation limit.
-     *
-     * @param player the starving player
-     * @param damage the damage on the player
-     * @return if the plugin needs to prevent the player from starving
-     */
-    private static boolean shouldNotStarve(Player player, double damage) {
-        return (ConfigHandler.getToggle("minStarveHealth") &&
-                DifficultyHandler.getPlayerDifficulty(player).getMinStarveHealth() > player.getHealth() - damage);
+    private static boolean shouldForceStarve(Player player) {
+        return shouldForceStarve(player, 0.0);
     }
 
     /**
