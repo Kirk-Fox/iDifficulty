@@ -25,6 +25,9 @@ toggle:
   venom-time: true
   # If "true" difficulties will affect the health at which a player will stop taking damage from starvation
   min-health-starvation: true
+  # If "true" the player will drop an amount of money on death specified by their difficulty
+  # Requires Vault and an economy plugin to have any effect
+  money-lost-on-death: false
 
 # A list of difficulties and their properties.
 # You may add or remove difficulties as long as you include values for all difficulty properties (keep-inventory, keep-xp, etc.)
@@ -51,6 +54,9 @@ difficulties:
     venom-time: 0
     # Sets the health at which starvation stops dealing damage to the player where 20 is 10 hearts and 0 is 0 hearts
     min-health-starvation: 10
+    # Sets the amount of money lost when a player dies
+    # Requires Vault and an economy plugin to have any effect
+    money-lost-on-death: 0.0
     # Sets whether this difficulty requires players that use it to have the "idifficulty.diff.[difficulty_name]" permission
     # For example, if set to true for this difficulty, players would need the permission node "idifficulty.diff.easy" to use it
     requires-permission: false
@@ -65,6 +71,7 @@ difficulties:
     ore-doubled-loot-chance: 0.05
     venom-time: 7
     min-health-starvation: 1
+    money-lost-on-death: 20.0
     requires-permission: false
 
   hard:
@@ -77,6 +84,7 @@ difficulties:
     ore-doubled-loot-chance: 0.1
     venom-time: 15
     min-health-starvation: 0
+    money-lost-on-death: 100.0
     requires-permission: false
 
 # DO NOT CHANGE UNDER ANY CIRCUMSTANCES

@@ -15,7 +15,8 @@ public class ConfigHandler {
     private static final String[][] CONFIG_VALUES = {{"keep-inventory", "keepInv"}, {"keep-xp", "keepExp"},
             {"mob-xp-multiplier", "mobExpMod"}, {"ore-xp-multiplier", "oreExpMod"}, {"damage-multiplier", "damageMod"},
             {"mob-doubled-loot-chance", "mobLootChance"}, {"ore-doubled-loot-chance", "oreLootChance"},
-            {"venom-time", "venomTime"}, {"min-health-starvation", "minStarveHealth"}};
+            {"venom-time", "venomTime"}, {"min-health-starvation", "minStarveHealth"},
+            {"money-lost-on-death", "moneyLostOnDeath"}};
     private static final Map<String, Boolean> TOGGLE_MAP = new HashMap<>();
 
     private static JavaPlugin plugin;

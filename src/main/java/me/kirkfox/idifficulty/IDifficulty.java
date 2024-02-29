@@ -4,11 +4,14 @@ import me.kirkfox.idifficulty.command.DifficultyCommand;
 import me.kirkfox.idifficulty.command.DifficultyTabCompleter;
 import me.kirkfox.idifficulty.difficulty.DifficultyHandler;
 import me.kirkfox.idifficulty.difficulty.PlayerDataStorage;
+import me.kirkfox.idifficulty.economy.VaultEconomy;
 import me.kirkfox.idifficulty.listener.*;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +25,7 @@ public final class IDifficulty extends JavaPlugin {
 
     private static IDifficulty plugin;
     private static Random rand;
+    private static VaultEconomy economy = null;
 
     private static String updateString = null;
 
@@ -35,6 +39,9 @@ public final class IDifficulty extends JavaPlugin {
 
         ConfigHandler.registerConfig();
         DifficultyHandler.registerDifficulties();
+
+        if (ConfigHandler.getToggle("moneyLostOnDeath"))
+            registerEconomy();
 
         registerCommand();
         registerListeners();
@@ -61,6 +68,23 @@ public final class IDifficulty extends JavaPlugin {
         }
     }
 
+    private void registerEconomy() {
+        if(!getServer().getPluginManager().isPluginEnabled("Vault")) {
+            outputWarning("Losing money on death is enabled in the config but Vault is not installed.");
+            outputWarning("You need to have Vault and an economy plugin installed to use this feature.");
+            return;
+        }
+        RegisteredServiceProvider<Economy> provider = getServer().getServicesManager().getRegistration(Economy.class);
+        if (provider == null) {
+            outputWarning("Losing money on death is enabled in the config but no economy plugin is installed.");
+            outputWarning("You need to have Vault and an economy plugin installed to use this feature.");
+            return;
+        }
+
+        economy = new VaultEconomy(provider.getProvider());
+        outputLog("Vault integration enabled!");
+    }
+
     private void registerCommand() {
         PluginCommand pc = getCommand("idifficulty");
         assert pc != null;
@@ -71,7 +95,7 @@ public final class IDifficulty extends JavaPlugin {
     private void registerListeners() {
         Listener[] listeners = {new BlockEventListener(), new DifficultyChangeListener(),
                 new EntityDamageByEntityListener(), new EntityDamageListener(), new EntityDeathListener(),
-                new PlayerDeathListener(), new PlayerJoinListener(), new PlayerStarveUpdateListener()};
+                new PlayerDeathListener(economy), new PlayerJoinListener(), new PlayerStarveUpdateListener()};
         for (Listener l : listeners) {
             getServer().getPluginManager().registerEvents(l, this);
         }

@@ -4,7 +4,7 @@ import me.kirkfox.idifficulty.ConfigHandler;
 import me.kirkfox.idifficulty.IDifficulty;
 import me.kirkfox.idifficulty.difficulty.Difficulty;
 import me.kirkfox.idifficulty.difficulty.DifficultyHandler;
-import org.bukkit.NamespacedKey;
+import me.kirkfox.idifficulty.economy.VaultEconomy;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,6 +15,12 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class PlayerDeathListener implements Listener {
+
+    private final VaultEconomy economy;
+
+    public PlayerDeathListener(VaultEconomy economy) {
+        this.economy = economy;
+    }
 
     /**
      * Handles keep inventory and keep experience mechanics upon a player's death.
@@ -66,6 +72,11 @@ public class PlayerDeathListener implements Listener {
         // Check if player was killed by difficulty-induced starvation. If so, adjust death message accordingly.
         if (EntityDamageListener.isDyingFromStarvation(p)) {
             event.setDeathMessage(p.getName() + " starved to death");
+        }
+
+        // Check if money loss on death is enabled and if economy is enabled.
+        if (ConfigHandler.getToggle("moneyLostOnDeath") && economy != null) {
+            economy.withdrawPlayer(p, d.getMoneyLostOnDeath());
         }
     }
 

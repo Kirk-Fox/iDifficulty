@@ -15,6 +15,7 @@ public class Difficulty {
     private final int venomTime;
     private final int minStarveHealth;
     private final boolean needsPermission;
+    private final double moneyLostOnDeath;
 
     public Difficulty(String name) {
         this.name = name;
@@ -28,6 +29,7 @@ public class Difficulty {
         this.venomTime = (int) getValue("venom-time");
         this.minStarveHealth = (int) getValue("min-health-starvation");
         this.needsPermission = (boolean) getValue("requires-permission");
+        this.moneyLostOnDeath = (double) getValue("money-lost-on-death");
     }
 
     private Object getValue(String key) { return ConfigHandler.getDifficultyValue(this.name, key); }
@@ -58,4 +60,5 @@ public class Difficulty {
 
     public boolean getNeedsPermission() { return needsPermission; }
 
+    public double getMoneyLostOnDeath() { return moneyLostOnDeath; }
 }
